@@ -1,10 +1,10 @@
 import React from "react";
-import logo from "../src/assets/logo.png";
-import SearchIcon from "@mui/icons-material/Search";
+import logo from "../assets/logo.png";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import "./Navbar.scss";
+import { Search, Heart, CircleUserRound, ShoppingCart } from "lucide-react";
+import "../Navbar.scss";
 function Navbar() {
   return (
     <>
@@ -15,7 +15,7 @@ function Navbar() {
         <div className="part2">
           <div>
             {" "}
-            <SearchIcon style={{ cursor: "pointer" }} />
+            <Search style={{ cursor: "pointer" }} />
           </div>
 
           <div
@@ -26,15 +26,28 @@ function Navbar() {
               gap: "5px",
             }}
           >
-            <AccountCircleIcon />
+            <CircleUserRound />
             <h4>Log in</h4>
           </div>
           <div id="Heart">
-            <FavoriteBorderIcon style={{ cursor: "pointer" }} />
+            <Heart style={{ cursor: "pointer" }} />
           </div>
           <div id="Cart">
-            <ShoppingCartIcon style={{ cursor: "pointer" }} />
+            <ShoppingCart style={{ cursor: "pointer" }} />
           </div>
+        </div>
+      </div>
+      <div className="ShopOptions">
+        <div>
+          <p>Shop All</p>
+          <p>Computers</p>
+          <p>Tablets</p>
+          <p>Drones & Cameras</p>
+          <p>Audio</p>
+          <p>Mobile</p>
+          <p>T.V & Home Cinema</p>
+          <p>Wearable Tech</p>
+          <p>Sale</p>
         </div>
       </div>
     </>
