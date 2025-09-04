@@ -1,0 +1,119 @@
+.HeroSection {
+  height: 100%;
+  padding: 20px;
+  .Banner {
+    width: 100%;
+    display: flex;
+    height: 80vh;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    .BannerImg {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      position: relative;
+
+      > div {
+        position: relative;
+        width: 100%;
+        height: 100%;
+
+        img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0;
+          animation: ImgsAni 30s infinite ease-in;
+          z-index: -1;
+          transition: all 0.7s ease;
+        }
+
+        .Img1 {
+          animation-delay: 0s;
+        }
+
+        .Img2 {
+          animation-delay: 10s;
+        }
+
+        .Img3 {
+          animation-delay: 20s;
+        }
+      }
+    }
+
+    .BannerBtns {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      > div {
+        display: flex;
+        width: 80%;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        gap: 2px;
+        > h3 {
+          background-color: red;
+          color: white;
+          padding: 3px;
+          font-weight: 200;
+        }
+        > h1 {
+          font-size: 35px;
+          color: white;
+        }
+        > button {
+          height: 50px;
+          font-size: 15px;
+          padding: 10px;
+          width: 150px;
+          border-radius: 30px;
+          background-color: blueviolet;
+          color: white;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s ease-in;
+          &:hover {
+            background-color: white;
+            border: 2px solid blueviolet;
+            color: blueviolet;
+          }
+        }
+        > p {
+          font-size: 14px;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+@keyframes ImgsAni {
+  0% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  33.3% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
