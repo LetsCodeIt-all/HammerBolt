@@ -3,7 +3,9 @@
   padding: 0;
   box-sizing: border-box;
 }
-
+body {
+  position: relative;
+}
 .HeroSection {
   height: 100%;
   width: 100%;
@@ -248,9 +250,25 @@
       }
     }
   }
+}
+
+@keyframes ImgsAni {
+  0% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  33.3% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+footer {
   .SupportBox {
     width: 25%;
-    background-color: white;
     display: flex;
     padding: 20px;
     padding-left: 30px;
@@ -273,22 +291,55 @@
       p {
         line-height: 1.5;
         margin: 5px;
+        color: black;
+        transition: color 0.6s ease-in-out;
       }
     }
   }
-}
+  .SupportBox:not(:nth-child(1)) {
+    p {
+      &:hover {
+        color: blue;
+        cursor: pointer;
+      }
+    }
+  }
+  .line {
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    > hr {
+      width: 60%;
+    }
+  }
+  .payments {
+    background-color: white;
+    padding: 10px;
+    /* padding-top: 20px; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    /* border: 2px solid red; */
+    /* height: 30vh; */
+    width: 100%;
+    > div {
+      /* border: 2px solid red; */
+      margin: 20px;
+      margin-bottom: 30px;
+    }
+  }
+  .CopyRight {
+    position: absolute;
+    background-color: rgb(243, 242, 242);
 
-@keyframes ImgsAni {
-  0% {
-    opacity: 1;
-  }
-  30% {
-    opacity: 1;
-  }
-  33.3% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
+    padding: 10px;
+    bottom: 0px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 0;
   }
 }

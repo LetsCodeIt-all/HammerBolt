@@ -5,6 +5,7 @@ import Home from "./Components/Home.jsx";
 import Cart from "./pages/Cart.jsx";
 import Product from "./pages/Product.jsx";
 import Checkout from "./pages/Checkout.jsx";
+import Footer from "./Components/Footer.jsx";
 function App() {
   return (
     <div>
@@ -15,7 +16,7 @@ function App() {
         <Route path="/product" element={<Product />} />
         <Route path="/checkout" element={<Checkout />} />
       </Routes>
-      hii
+      <Footer />
     </div>
   );
 }

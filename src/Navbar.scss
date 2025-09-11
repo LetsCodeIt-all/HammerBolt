@@ -27,9 +27,10 @@
 }
 .ShopOptions {
   width: 100%;
-  padding: 10px;
+  padding: 15px;
+  font-size: 15px;
   display: flex;
-  background-color: rgb(238, 237, 237);
+  background-color: rgb(245, 243, 243);
   align-items: center;
   justify-content: flex-start;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -41,7 +42,7 @@
     > p {
       color: rgb(73, 73, 73);
       cursor: pointer;
-      transition: color 0.3s ease-in;
+      transition: color 0.2s ease-in;
       &:hover {
         color: rgb(61, 61, 252);
       }

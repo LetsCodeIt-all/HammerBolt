@@ -47,46 +47,6 @@ function Home() {
         "https://static.wixstatic.com/media/c837a6_7a28e7356d6d4e9dbc6e0b1dfb2ac9b6~mv2.jpg/v1/fill/w_124,h_124,q_90,enc_avif,quality_auto/c837a6_7a28e7356d6d4e9dbc6e0b1dfb2ac9b6~mv2.jpg",
     },
   ];
-  let footers = [
-    {
-      title: "Store Location",
-      content: [
-        "500 Terry Francine Street",
-        "San Francisco, CA 94158",
-        "info@mysite.com",
-        "123-456-7890",
-      ],
-    },
-    {
-      title: "Shop",
-      content: [
-        "Shop All",
-        "Computers",
-        "Tablets",
-        "Drones & Cameras",
-        "Audio",
-        "Mobiles",
-        "T.V & Home Cinema",
-        "Wearable Tech",
-        "Sale",
-      ],
-    },
-    {
-      title: "Customer Support",
-      content: [
-        "Contact Us",
-        "Help Center",
-        "About Us",
-        "Careers",
-        "Audio",
-        "Mobiles",
-        "T.V & Home Cinema",
-        "Wearable Tech",
-        "Sale",
-      ],
-    },
-  ];
-
   return (
     <div className="HeroSection">
       <div className="Banner">
@@ -184,25 +144,6 @@ function Home() {
           })}
         </div>
       </div>
-      <footer>
-        <div className="Support" style={{ display: "flex" }}>
-          {footers.map(({ title, content }, idx) => {
-            return (
-              <div key={idx} className="SupportBox">
-                <div className="supportTitle">
-                  <h1>{title}</h1>
-                </div>
-                <div className="supportContent">
-                  {content.map((e, idx) => (
-                    <p key={idx}>{e}</p>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="payments"></div>
-      </footer>
     </div>
   );
 }
