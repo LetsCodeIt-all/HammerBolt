@@ -1,10 +1,13 @@
 import React from "react";
 import logo from "../assets/logo.png";
+import { Link } from "react-router";
+
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Search, Heart, CircleUserRound, ShoppingCart } from "lucide-react";
-import "../Navbar.scss";
+import "../Scss/Navbar.scss";
+
 function Navbar() {
   return (
     <>
@@ -40,14 +43,14 @@ function Navbar() {
       <div className="ShopOptions">
         <div>
           <p>Shop All</p>
-          <p>Computers</p>
-          <p>Tablets</p>
-          <p>Drones & Cameras</p>
-          <p>Audio</p>
-          <p>Mobile</p>
-          <p>T.V & Home Cinema</p>
-          <p>Wearable Tech</p>
-          <p>Sale</p>
+          <Link to="/shop/computers">Computers</Link>
+          <Link to="/shop/tablets">Tablets</Link>
+          <Link to="/shop/drones&Camera">Drones & Cameras</Link>
+          <Link to="/shop/audio">Audio</Link>
+          <Link to="/shop/mobile">Mobile</Link>
+          <Link to="/shop/tv&HomeCinema">T.V & Home Cinema</Link>
+          <Link to="/shop/wearableTechs">Wearable Tech</Link>
+          <Link to="/shop/sale">Sale</Link>
         </div>
       </div>
     </>

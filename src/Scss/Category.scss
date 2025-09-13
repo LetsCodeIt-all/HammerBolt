@@ -1,0 +1,91 @@
+.categoryPage {
+  height: 100vh;
+  display: grid;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  grid-template-columns: 20% 80%;
+  > div {
+    background-color: white;
+    height: 100%;
+  }
+  aside {
+    background-color: #f5f3f3;
+    font-weight: 200;
+    padding: 20px;
+    .BrowseFilter {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      > h2 {
+        font-weight: 400;
+      }
+    }
+    .categoryLink {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      padding-left: 15px;
+      gap: 10px;
+      font-weight: 300;
+      > p {
+        cursor: pointer;
+      }
+    }
+    .SliderDiv {
+      padding: 10px;
+    }
+    .Slider {
+      color: black; // track and thumb color
+      height: 1px;
+      // track height
+      & .MuiSlider-thumb {
+        height: 20;
+        width: 20;
+        background-color: black;
+        border: none;
+      }
+      & .MuiSlider-track {
+        border: "none";
+      }
+      & .MuiSlider-rail {
+        opacity: 1;
+        background-color: rgb(157, 158, 157);
+      }
+      & .MuiSlider-valueLabel {
+        background-color: green;
+      }
+      hr {
+        margin: 5px;
+      }
+    }
+  }
+  .CategoryProducts {
+    background-color: #f5f3f3;
+
+    display: grid;
+    grid-template-rows: 20% 80%;
+    padding: 10px;
+    .Heading {
+      padding: 10px;
+      padding-left: 20px;
+      h1 {
+        font-size: 50px;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        font-weight: 500;
+      }
+    }
+
+    > div {
+      margin: 5px;
+    }
+    .productPart {
+      span {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+      }
+    }
+  }
+}
