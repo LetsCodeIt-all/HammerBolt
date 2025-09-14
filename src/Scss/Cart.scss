@@ -1,0 +1,111 @@
+@mixin btnStyle($width) {
+  border-radius: 10px;
+  color: white;
+  transition: all 0.3s ease-in-out;
+  font-weight: bold;
+  width: $width;
+  padding: 10px;
+  border: none;
+  background-color: rgb(236, 5, 44);
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  &:hover {
+    background-color: white;
+    color: rgb(236, 5, 44);
+    border: 2px solid rgb(236, 5, 44);
+  }
+}
+
+.Cart {
+  padding: 10px;
+  .delivery {
+    border: 0.2px solid grey;
+    padding: 10px;
+    display: flex;
+    margin: 10px;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 10px;
+    p {
+      margin: 10px;
+      font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+      font-size: larger;
+    }
+    button {
+      padding: 12px;
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+      border-radius: 10px;
+      background-color: rgb(236, 5, 44);
+      border: none;
+      height: 40px;
+      width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        background-color: white;
+        color: rgb(236, 5, 44);
+        border: 2px solid rgb(236, 5, 44);
+      }
+    }
+  }
+  .AddedProduct {
+    margin: 10px;
+    padding: 10px;
+    border: 0.2px solid grey;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 30% 70%;
+    gap: 10px;
+    img {
+      width: 100%;
+      border-radius: 20px;
+    }
+    > div {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      div {
+        display: flex;
+        gap: 10px;
+        button {
+          @include btnStyle(50%);
+        }
+      }
+    }
+  }
+  .Total {
+    border: 0.2px solid gray;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    .Calculations {
+      padding: 10px;
+      div {
+        display: flex;
+        justify-content: space-between;
+        width: 70%;
+        padding: 10px;
+        font-size: 20px;
+      }
+    }
+    .GateWay {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      button {
+        @include btnStyle(30%);
+      }
+    }
+  }
+}
