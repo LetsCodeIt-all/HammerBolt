@@ -43,14 +43,14 @@ function Navbar() {
       <div className="ShopOptions">
         <div>
           <p>Shop All</p>
-          <Link to="/shop/computers">Computers</Link>
+          <Link to="/shop/beauty">Beauty</Link>
           <Link to="/shop/tablets">Tablets</Link>
-          <Link to="/shop/drones&Camera">Drones & Cameras</Link>
-          <Link to="/shop/audio">Audio</Link>
-          <Link to="/shop/mobile">Mobile</Link>
-          <Link to="/shop/tv&HomeCinema">T.V & Home Cinema</Link>
-          <Link to="/shop/wearableTechs">Wearable Tech</Link>
-          <Link to="/shop/sale">Sale</Link>
+          <Link to="/shop/fragrances">Fragrances</Link>
+          <Link to="/shop/sunglasses">Sunglasses</Link>
+          <Link to="/shop/smartphones">Mobile</Link>
+          <Link to="/shop/laptops">laptops</Link>
+          <Link to="/shop/sports-accessories">Sports</Link>
+          <Link to="/shop/mens-watches">Watches</Link>
         </div>
       </div>
     </>

@@ -1,18 +1,47 @@
 import React, { useState } from "react";
 import "../Scss/Category.scss";
 import Slider from "@mui/material/Slider";
-import product from "../product.js";
+// import product from "../product.js";
 import { useParams } from "react-router";
 import ProductCard from "../Components/ProductCard";
+import { useEffect } from "react";
 const CategoryPage = () => {
   const { category } = useParams();
-  const filtered = product.filter(
-    (item) => item.category.toLowerCase() === category.toLowerCase()
-  );
+  const [ArrProducts, setArrProducts] = useState([]);
+  const Categorylinks = [
+    "Beauty",
+    "Tablets",
+    "Fragrances",
+    "Sunglasses",
+    "Smartphones",
+    "laptops",
+    "Sports-accessories",
+    "Mens-watches",
+  ];
+  // const filtered = product.filter(
+  //   (item) => item.category.toLowerCase() === category.toLowerCase()
+  // );
   const [range, setRange] = useState([70, 100]);
   const handleSliderChange = (e, newValue) => {
     setRange(newValue); // newValue is an array: [min, max]
   };
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const res = await fetch(
+          `https://dummyjson.com/products/category/${category}?limit=10`
+        );
+        const data = await res.json();
+        console.log(data);
+        setArrProducts(data.products);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    }
+
+    fetchProduct();
+  }, [category]);
+
   return (
     <div className="categoryPage">
       <aside>
@@ -21,19 +50,23 @@ const CategoryPage = () => {
           <hr />
         </div>
         <div className="categoryLink">
-          <p> All Products</p>
-          <p>Best Sellers</p>
-          <p>Computers</p>
-          <p>Drones & Cameras</p>
-          <p>Headphones</p>
-          <p>Home Page Best Sellers</p>
-          <p>Home Page Sale</p>
-          <p>Mobile</p>
-          <p>Sale</p>
-          <p>Speakers</p>
-          <p>Tablets</p>
-          <p>TV & Home Cinema</p>
-          <p>Wearable Tech</p>
+          {Categorylinks.map((e) => {
+            console.log(e, category);
+            if (e.toLowerCase() == category) {
+              return (
+                <p
+                  style={{
+                    fontWeight: "bold",
+                    opacity: "0.8",
+                    fontSize: "18px",
+                  }}
+                >
+                  {e}
+                </p>
+              );
+            }
+            return <p>{e}</p>;
+          })}
         </div>
         <div className="Filter">
           <div className="BrowseFilter">
@@ -64,13 +97,14 @@ const CategoryPage = () => {
         </div>
         <div className="productPart">
           <span>
-            <p>8 Products</p>
+            <p>{ArrProducts.length} Products</p>
             <p>Sort by Latetes</p>
           </span>
-          {filtered.map((product) => {
-            console.log(product.id);
-            return <ProductCard key={product.id} product={product} />;
-          })}
+          <div className="productsDiv">
+            {ArrProducts.map((product) => {
+              return <ProductCard key={product.id} product={product} />;
+            })}
+          </div>
         </div>
       </div>
     </div>

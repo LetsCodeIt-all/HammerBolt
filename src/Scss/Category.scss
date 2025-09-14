@@ -1,5 +1,5 @@
 .categoryPage {
-  height: 100vh;
+  // height: 100vh;
   display: grid;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
@@ -63,8 +63,10 @@
   .CategoryProducts {
     background-color: #f5f3f3;
 
-    display: grid;
-    grid-template-rows: 20% 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    // grid-template-rows: 10% 90%;
     padding: 10px;
     .Heading {
       padding: 10px;
@@ -85,6 +87,67 @@
         display: flex;
         justify-content: space-between;
         padding: 10px;
+      }
+    }
+    .productsDiv {
+      display: flex;
+      width: 100%;
+      flex-wrap: wrap;
+      #product {
+        width: 25%;
+        padding: 10px;
+        height: 100%;
+        cursor: pointer;
+        margin: 10px;
+        border: 0.2px solid rgb(194, 192, 192);
+
+        border-radius: 10px;
+        font-family: -apple-system, "Helvetica Neue", sans-serif, "Mier Book";
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        color: rgb(0, 0, 238);
+        img {
+          height: 60%;
+          width: 100%;
+        }
+        #title {
+          font-size: 20px;
+          font-weight: bold;
+          opacity: 0.7;
+          margin: 5px;
+          color: rgb(20, 4, 250);
+        }
+        #price {
+          font-size: 30px;
+          margin: 5px;
+          color: black;
+        }
+        button {
+          background-color: rgb(238, 236, 236);
+          color: rgb(44, 44, 44);
+          padding: 5px;
+          border: none;
+          border-radius: 10px;
+          font-weight: bold;
+          opacity: 0.7;
+        }
+        #rating {
+          background-color: #854836;
+          padding: 5px;
+          color: white;
+          font-size: 15px;
+          height: max-content;
+          width: fit-content;
+          border-radius: 20px;
+        }
+        box-shadow: none;
+        transition: all 0.3s ease-in;
+        &:hover {
+          box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+            rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+            rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+        }
       }
     }
   }
