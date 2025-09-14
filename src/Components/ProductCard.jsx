@@ -1,5 +1,7 @@
 import React from "react";
 import { Star } from "lucide-react";
+import { Link } from "react-router";
+
 function ProductCard({ product }) {
   return (
     <div id="product">
@@ -20,6 +22,9 @@ function ProductCard({ product }) {
         </p>
         {product.reviews.length} Reviews
       </div>
+      <Link to={`/product/${product.id}`} style={{}}>
+        view Details
+      </Link>
     </div>
   );
 }

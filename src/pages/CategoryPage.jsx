@@ -2,12 +2,18 @@ import React, { useState } from "react";
 import "../Scss/Category.scss";
 import Slider from "@mui/material/Slider";
 // import product from "../product.js";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import ProductCard from "../Components/ProductCard";
 import { useEffect } from "react";
+import { useContext } from "react";
+import { MyContext } from "../Components/ProductContext";
+
 const CategoryPage = () => {
   const { category } = useParams();
-  const [ArrProducts, setArrProducts] = useState([]);
+  // const [ArrProducts, setArrProducts] = useState([]);
+
+  const { value: ArrProducts, setValue: setArrProducts } =
+    useContext(MyContext);
   const Categorylinks = [
     "Beauty",
     "Tablets",
@@ -32,7 +38,6 @@ const CategoryPage = () => {
           `https://dummyjson.com/products/category/${category}?limit=10`
         );
         const data = await res.json();
-        console.log(data);
         setArrProducts(data.products);
       } catch (error) {
         console.error("Failed to fetch products:", error);
