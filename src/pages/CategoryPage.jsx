@@ -55,8 +55,7 @@ const CategoryPage = () => {
           <hr />
         </div>
         <div className="categoryLink">
-          {Categorylinks.map((e) => {
-            console.log(e, category);
+          {Categorylinks.map((e, idx) => {
             if (e.toLowerCase() == category) {
               return (
                 <p
@@ -70,7 +69,7 @@ const CategoryPage = () => {
                 </p>
               );
             }
-            return <p>{e}</p>;
+            return <p key={idx}>{e}</p>;
           })}
         </div>
         <div className="Filter">

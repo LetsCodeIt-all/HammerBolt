@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import logo from "../assets/logo.png";
 import { Link } from "react-router";
 
@@ -7,8 +7,10 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Search, Heart, CircleUserRound, ShoppingCart } from "lucide-react";
 import "../Scss/Navbar.scss";
+import { MyContext } from "./ProductContext";
 
 function Navbar() {
+  const { Cart: CartProduct } = useContext(MyContext);
   return (
     <>
       <div className="Navbar">
@@ -17,7 +19,6 @@ function Navbar() {
         </div>
         <div className="part2">
           <div>
-            {" "}
             <Search style={{ cursor: "pointer" }} />
           </div>
 
@@ -37,6 +38,7 @@ function Navbar() {
           </div>
           <div id="Cart">
             <ShoppingCart style={{ cursor: "pointer" }} />
+            {CartProduct.length}
           </div>
         </div>
       </div>

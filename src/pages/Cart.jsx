@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { MapPin, Heart, CircleX } from "lucide-react";
 import "../Scss/Cart.scss";
+import { MyContext } from "../Components/ProductContext";
+
 function Cart() {
+  const { Cart: CartProduct, setCart: SetCartProduct } = useContext(MyContext);
+  // const [parsed, setparsed] = useState(
+  //   CartProduct.current.map((r) => {
+  //     return JSON.parse(r);
+  //   })
+  // );
+
   return (
     <div className="Cart">
       <div className="delivery">
@@ -12,26 +21,36 @@ function Cart() {
         </p>
         <button>Change</button>
       </div>
-      <div className="AddedProduct">
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNu9uulWIgqP6ax8ikiM4eQUf2cNqGtOMkaQ&s"
-          alt=""
-        />
-        <div className="otherDetails">
-          <h1>Product Title</h1>
-          <h2>Price</h2>
-          <p>Delivery by </p>
-          <div>
-            <button>
-              <Heart />
-              Move to Wishlist
-            </button>
-            <button>
-              <CircleX />
-              Remove
-            </button>
-          </div>
-        </div>
+      <div className="Products">
+        {CartProduct.map((product, idx) => {
+          return (
+            <div className="AddedProduct">
+              <img src={product.images[2]} alt="" />
+              <div className="otherDetails">
+                <p>Quantity: {product.quantity || 1}</p>
+
+                <h1>{product.title}</h1>
+                <h2>{product.price}</h2>
+
+                <p>Delivery by 8 Jan 2035</p>
+                <div>
+                  <button>
+                    <Heart />
+                    Move to Wishlist
+                  </button>
+                  <button
+                    onClick={() => {
+                      SetCartProduct(CartProduct.filter((__, i) => i !== idx));
+                    }}
+                  >
+                    <CircleX />
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
       <div className="Total">
         <div className="Calculations">
@@ -39,7 +58,17 @@ function Cart() {
           <div>
             <p>Product Title</p>
             <p>Price</p>
+            <p>Quantity</p>
           </div>
+          {CartProduct.map((product) => {
+            return (
+              <div className="PriceDetails">
+                <p>{product.title}</p>
+                <p>+${product.price * product.quantity}</p>
+                <p>{product.quantity}</p>
+              </div>
+            );
+          })}
         </div>
         <div className="GateWay">
           <h2>Total Price </h2>

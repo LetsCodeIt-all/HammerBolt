@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { useContext } from "react";
 import { MyContext } from "../Components/ProductContext";
 import "../Scss/Product.scss";
@@ -7,19 +7,42 @@ import { ChevronsRight, ShoppingCart, CircleUser } from "lucide-react";
 function Product() {
   const { id } = useParams();
   const { value: ArrProducts } = useContext(MyContext);
-  // console.log(ArrProducts, id);
+  // const [CartProduct, setCartProduct] = useState([]);
+  const { Cart: CartProduct, setCart: SetCartProduct } = useContext(MyContext); // console.log(ArrProducts, id);
   const filterd = ArrProducts.filter((e) => {
     return e.id == parseInt(id);
   });
-  console.log(filterd);
+  // CartProduct.current = [...CartProduct.current,filterd[0]];
+  function Duplicateitem() {
+    const productToAdd = filterd[0];
+
+    // Check if the item is already in the cart
+    const existingProduct = CartProduct.find(
+      (item) => item.id === productToAdd.id
+    );
+
+    if (existingProduct) {
+      // Map over cart and update quantity
+      const updatedCart = CartProduct.map((item) => {
+        if (item.id === productToAdd.id) {
+          return { ...item, quantity: (item.quantity || 1) + 1 };
+        }
+        return item;
+      });
+      SetCartProduct(updatedCart);
+    } else {
+      // Add new item with quantity: 1
+      SetCartProduct([...CartProduct, { ...productToAdd, quantity: 1 }]);
+    }
+  }
+
   return (
     <div>
       {filterd.map((product) => {
-        console.log(product);
         return (
           <div key={product.id} className="ProductDetails">
             <div className="images">
-              <img src={product.images[1]} alt="" />
+              <img src={product.images[0]} alt="" />
             </div>
 
             <div className="details">
@@ -33,10 +56,13 @@ function Product() {
 
               <i>{product.warrantyInformation}</i>
               <div id="BtnS">
-                <button>
-                  <ShoppingCart />
-                  Add to Cart
-                </button>
+                <Link to="/cart">
+                  <button onClick={Duplicateitem}>
+                    <ShoppingCart />
+                    Add to Cart
+                  </button>
+                </Link>
+
                 <button>
                   <ChevronsRight />
                   Buy
@@ -44,9 +70,9 @@ function Product() {
               </div>
               <div className="Reviews">
                 <h3>Reviews</h3>
-                {product.reviews.map((rev) => {
+                {product.reviews.map((rev, idx) => {
                   return (
-                    <div>
+                    <div key={idx}>
                       <p>
                         <CircleUser />
                         {rev.reviewerName}
