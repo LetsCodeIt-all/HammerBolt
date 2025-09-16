@@ -44,15 +44,33 @@ function Navbar() {
       </div>
       <div className="ShopOptions">
         <div>
-          <p>Shop All</p>
-          <Link to="/shop/beauty">Beauty</Link>
-          <Link to="/shop/tablets">Tablets</Link>
-          <Link to="/shop/fragrances">Fragrances</Link>
-          <Link to="/shop/sunglasses">Sunglasses</Link>
-          <Link to="/shop/smartphones">Mobile</Link>
-          <Link to="/shop/laptops">laptops</Link>
-          <Link to="/shop/sports-accessories">Sports</Link>
-          <Link to="/shop/mens-watches">Watches</Link>
+          <Link to="/" className="Links">
+            Shop All{" "}
+          </Link>
+          <Link to="/shop/beauty" className="Links">
+            Beauty
+          </Link>
+          <Link to="/shop/tablets" className="Links">
+            Tablets
+          </Link>
+          <Link to="/shop/fragrances" className="Links">
+            Fragrances
+          </Link>
+          <Link to="/shop/sunglasses" className="Links">
+            Sunglasses
+          </Link>
+          <Link to="/shop/smartphones" className="Links">
+            Mobile
+          </Link>
+          <Link to="/shop/laptops" className="Links">
+            laptops
+          </Link>
+          <Link to="/shop/sports-accessories" className="Links">
+            Sports
+          </Link>
+          <Link to="/shop/mens-watches" className="Links">
+            Watches
+          </Link>
         </div>
       </div>
     </>

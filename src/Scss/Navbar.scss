@@ -39,13 +39,31 @@
     justify-content: space-around;
     align-items: center;
     width: 60%;
-    > p {
+    .Links {
       color: rgb(73, 73, 73);
       cursor: pointer;
-      transition: color 0.2s ease-in;
+      font-size: 15px;
+      font-weight: bold;
+      text-decoration: none;
+      position: relative;
       &:hover {
         color: rgb(61, 61, 252);
       }
+    }
+    .Links::after {
+      content: "";
+      position: absolute;
+      background-color: black;
+      height: 3px;
+      border-radius: 5px;
+      width: 0%;
+      bottom: -5px;
+      left: 0px;
+      transition: width 0.2s ease-in;
+    }
+
+    .Links:hover::after {
+      width: 100%;
     }
   }
 }

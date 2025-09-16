@@ -93,9 +93,12 @@
       div {
         display: flex;
         justify-content: space-between;
-        width: 70%;
+        width: 100%;
         padding: 10px;
         font-size: 20px;
+        p {
+          width: 40%;
+        }
       }
     }
     .GateWay {

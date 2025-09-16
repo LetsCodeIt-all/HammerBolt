@@ -5,11 +5,6 @@ import { MyContext } from "../Components/ProductContext";
 
 function Cart() {
   const { Cart: CartProduct, setCart: SetCartProduct } = useContext(MyContext);
-  // const [parsed, setparsed] = useState(
-  //   CartProduct.current.map((r) => {
-  //     return JSON.parse(r);
-  //   })
-  // );
 
   return (
     <div className="Cart">
@@ -71,7 +66,13 @@ function Cart() {
           })}
         </div>
         <div className="GateWay">
-          <h2>Total Price </h2>
+          <h2>
+            Total Price $
+            {CartProduct.reduce(
+              (sum, product) => sum + product.price * product.quantity,
+              0
+            )}
+          </h2>
           <button>Continue</button>
         </div>
       </div>
