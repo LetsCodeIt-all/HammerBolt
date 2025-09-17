@@ -1,0 +1,62 @@
+.Checkout {
+  border: 2px solid red;
+  padding: 20px;
+}
+
+.progressBar {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  div:last-of-type {
+    div {
+      background-color: transparent;
+    }
+  }
+}
+
+.progressContainer {
+  width: 60%;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 10px;
+  position: relative;
+  margin: 1rem 0;
+
+  .progressFill {
+    background-color: #ec052c;
+    height: 100%;
+    transition: width 0.4s ease-in-out;
+  }
+}
+
+.Circle,
+.Text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: space-between;
+  width: 62%;
+  div {
+    background-color: white;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    h1 {
+      width: 20px;
+      height: 20px;
+      background-color: #ec052c;
+      border-radius: 50%;
+    }
+  }
+}
+.Text {
+  top: 40px;
+}
