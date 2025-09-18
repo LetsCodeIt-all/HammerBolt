@@ -1,31 +1,60 @@
 import React from "react";
 import style from "../Scss/Checkout.module.scss";
 function Delivery() {
+  const ShipingMethods = [
+    {
+      delivery: "Standard Delivery",
+      date: "after 2 days delivery",
+      price: "Free",
+    },
+    {
+      delivery: "Express Delivery",
+      date: "same day delivery",
+      price: "$10",
+    },
+    {
+      delivery: "Scheduled delivery",
+      price: "$20",
+    },
+  ];
+
   return (
     <div className={style.Delivery}>
       <div className={style.Address}>
         <h1>Delivery Address</h1>
         <div>
-          <p> Gala no. 1 waghral pada, Bhoida Pada, Sativali,Vasai E 401208</p>
+          <p> Gala no. 1 Waghral pada, Bhoida Pada, Sativali,Vasai E 401208</p>
           <button>Change</button>
         </div>
       </div>
       <div className={style.dateOfDelivery}>
         <h2>Shipping Method</h2>
         <form>
-          <div className={style.Divein}>
-            <input type="radio" name="" id="Standard" />
+          {ShipingMethods?.map((method, i) => {
+            return (
+              <div className={style.Divein}>
+                <p>
+                  <input type="radio" name="method" id={i} />
+                </p>
 
-            <label htmlFor="Standard">
-              <div className={style.innerBx}>
-                <div className={style.innerMost}>
-                  <h3>Standard Delivery</h3>
-                  <p> after 2 days delivery</p>
-                </div>
-                <h3>Free</h3>
+                <label htmlFor={i}>
+                  <div className={style.innerBx}>
+                    <div className={style.innerMost}>
+                      <h3>{method.delivery}</h3>
+                      <p>
+                        {method.date ? (
+                          method.date
+                        ) : (
+                          <input type="date"></input>
+                        )}
+                      </p>
+                    </div>
+                    <h3>{method.price}</h3>
+                  </div>
+                </label>
               </div>
-            </label>
-          </div>
+            );
+          })}
         </form>
       </div>
     </div>

@@ -1,6 +1,22 @@
 .Checkout {
   border: 2px solid red;
   padding: 20px;
+  .Btns {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    button {
+      padding: 13px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      background-color: #ec052c;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    }
+  }
 }
 
 .progressBar {
@@ -101,26 +117,79 @@
     border: 1px solid pink;
     border-radius: 10px;
     width: 70%;
-    padding: 10px;
+    padding: 20px;
     margin: 10px;
+    .Divein:has(input[type="radio"]:checked) {
+      background-color: #f0f3fc;
+      border: 2px solid blue;
+    }
     .Divein {
-      border: 0.2px solid blue;
+      border: 0.2px solid rgb(201, 199, 199);
+      border-radius: 10px;
+      height: 90px;
+      > p {
+        width: 10%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
       display: flex;
+      font-size: 18px;
       width: 100%;
-      margin-top: 5px;
+      margin: 5px;
+
       align-items: center;
-      input {
-        width: 15%;
-        height: 100%;
+      transition: all 0.3s ease;
+      input[type="radio"] {
+        appearance: none; /* For modern browsers */
+        -webkit-appearance: none; /* Safari/Chrome */
+        -moz-appearance: none; /* Firefox */
+        border: 2px solid #ccc;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        outline: none;
+        cursor: pointer;
+        position: relative;
+      }
+
+      /* Add a custom "dot" for checked state */
+      input[type="radio"]:checked::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        background: blue;
+        border-radius: 50%;
+      }
+      input[type="date"] {
+        width: 200px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        color: black;
       }
       label {
         width: 100%;
+        cursor: pointer;
         .innerBx {
           height: 100%;
           width: 90%;
           display: flex;
           justify-content: space-between;
           padding: 20px;
+          .innerMost {
+            p {
+              font-size: 15px;
+              color: grey;
+              opacity: 0.9;
+            }
+          }
         }
       }
     }
