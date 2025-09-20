@@ -10,6 +10,7 @@ function Checkout() {
       <ProgressBar prop={progress} />
       {progress == 0 && <Delivery />}
       {progress == 50 && <Payment />}
+      {progress == 100 && <Review />}
       <div className={style.Btns}>
         <button
           onClick={() => {
