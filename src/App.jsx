@@ -7,6 +7,7 @@ import Product from "./pages/Product.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Footer from "./Components/Footer.jsx";
 import CategoryPage from "./pages/CategoryPage.jsx";
+import Login from "./pages/Login.jsx";
 function App() {
   return (
     <div>
@@ -18,6 +19,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/shop/:category" element={<CategoryPage />} />
         <Route path="/product/:id" element={<Product />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
       <Footer />
     </div>
