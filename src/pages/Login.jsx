@@ -1,44 +1,65 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import "../Scss/Login.scss";
+import { supabase } from "../SupabaseClient.js";
 
 function Login() {
+  const [issignUp, setsignUp] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  // form submit (email + password)
+  const onSubmit = async (formData) => {
     try {
-      const res = await fetch("http://localhost:5000/emailandpassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        `http://localhost:5000/auth/${issignUp ? "signup" : "login"}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
-      if (!res.ok) {
-        throw new Error("Login failed. Please check your credentials.");
-      }
+      if (!res.ok) throw new Error("Login failed. Please check credentials.");
 
       const result = await res.json();
-      console.log(result);
-      // Handle successful login (e.g., redirect user)
+      console.log("Backend auth success:", result);
     } catch (error) {
       console.error("Error during login:", error.message);
-      // Display error message to the user
       alert(error.message);
+    }
+  };
+
+  // Google login
+  const handleGoogleLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+
+    if (error) {
+      console.error("Error logging in with Google:", error.message);
+    } else {
+      console.log("Redirecting to Google…", data);
     }
   };
 
   return (
     <div className="Login">
       <div>
-        <h2>Welcome Back</h2>
-        <p>Login to your account</p>
+        {issignUp ? <h2>Happy to see You</h2> : <h2>Welcome Back</h2>}
+        {issignUp ? <p>Don't Forget Password</p> : <p>Login to your account</p>}
         <form onSubmit={handleSubmit(onSubmit)} method="post">
+          {issignUp && (
+            <input
+              type="text"
+              placeholder="Name"
+              {...register("name", { required: "Name is required." })}
+            />
+          )}
+
           <input
             type="text"
             placeholder="Email"
@@ -72,17 +93,26 @@ function Login() {
           )}
 
           <p>Forgot Password?</p>
+
           <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Logging in..." : "Login"}
-          </button>
-          <button>
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
-              alt=""
-            />
-            Continue with google
+            {issignUp
+              ? isSubmitting
+                ? "We are storing your data..."
+                : "Register"
+              : isSubmitting
+              ? "Logging in..."
+              : "Let me in"}
           </button>
         </form>
+        <button onClick={handleGoogleLogin}>
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+            alt="Google Logo"
+          />
+          Continue with Google
+        </button>
+        Don't have an account?{" "}
+        <p onClick={() => setsignUp(!issignUp)}>Sign Up</p>
       </div>
     </div>
   );

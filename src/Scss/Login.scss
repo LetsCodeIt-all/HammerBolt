@@ -29,13 +29,12 @@
       width: 80%;
       border-radius: 10px;
       background-color: rgb(253, 252, 252);
-      border: 2px solid rgb(187, 186, 186);
+      border: 0.2px solid rgb(187, 186, 186);
       color: black;
       font-weight: bold;
     }
     input:focus {
       outline: 2px solid blue;
-      border: none;
     }
     button {
       width: 40%;
