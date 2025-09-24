@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import "../Scss/Login.scss";
 import { supabase } from "../SupabaseClient.js";
-
+import { MyContext } from "../Components/ProductContext";
 function Login() {
   const [issignUp, setsignUp] = useState(false);
+  const { setUser } = useContext(MyContext);
   const {
     register,
     handleSubmit,
@@ -23,9 +24,13 @@ function Login() {
         }
       );
 
-      if (!res.ok) throw new Error("Login failed. Please check credentials.");
+      if (!res.ok) {
+        setsignUp(true);
+        alert("Pls SignUp first");
+      }
 
       const result = await res.json();
+      setUser(result);
       console.log("Backend auth success:", result);
     } catch (error) {
       console.error("Error during login:", error.message);
@@ -38,7 +43,7 @@ function Login() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
-
+    setUser(data);
     if (error) {
       console.error("Error logging in with Google:", error.message);
     } else {
@@ -92,8 +97,6 @@ function Login() {
             <p className="error-message">{errors.password.message}</p>
           )}
 
-          <p>Forgot Password?</p>
-
           <button type="submit" disabled={isSubmitting}>
             {issignUp
               ? isSubmitting
@@ -104,15 +107,18 @@ function Login() {
               : "Let me in"}
           </button>
         </form>
-        <button onClick={handleGoogleLogin}>
+        <button onClick={handleGoogleLogin} className="GoogleBtn">
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
             alt="Google Logo"
           />
           Continue with Google
         </button>
-        Don't have an account?{" "}
-        <p onClick={() => setsignUp(!issignUp)}>Sign Up</p>
+        {issignUp ? "Already Registered?" : "Don't have an account?"}
+
+        <p onClick={() => setsignUp(!issignUp)} style={{ cursor: "pointer" }}>
+          {issignUp ? "Login" : "signUp"}
+        </p>
       </div>
     </div>
   );

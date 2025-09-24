@@ -11,6 +11,8 @@ import { MyContext } from "./ProductContext";
 
 function Navbar() {
   const { Cart: CartProduct } = useContext(MyContext);
+  const { user } = useContext(MyContext);
+  // console.log(user["identities"][0]["identity_data"]["picture"]);
   return (
     <>
       <div className="Navbar">
@@ -30,8 +32,20 @@ function Navbar() {
               gap: "5px",
             }}
           >
-            <CircleUserRound />
-            <h4>Log in</h4>
+            {user ? (
+              <img
+                src={user["identities"][0]["identity_data"]["picture"]}
+                alt=""
+                className="avatar"
+              />
+            ) : (
+              <CircleUserRound />
+            )}
+            {user ? (
+              `${user["identities"][0]["identity_data"]["full_name"]}`
+            ) : (
+              <h4>Log in</h4>
+            )}
           </div>
           <div id="Heart">
             <Heart style={{ cursor: "pointer" }} />
