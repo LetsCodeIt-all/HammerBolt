@@ -55,14 +55,40 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-router.get("/:userId", async (req, res) => {
+router.get("/cart/:userId", async (req, res) => {
   const { userId } = req.params;
   try {
-    const cart = await prisma.cart.findMany({ where: { userId } });
+    const cart = await prisma.CartItem.findMany({ where: { userId } });
     res.json(cart);
   } catch (err) {
     res.status(500).json({ error: "Error fetching cart" });
   }
 });
+router.post("/cart", async (req, res) => {
+  const { userId, productId, product } = req.body;
 
+  try {
+    const user = await prisma.CartItem.create({
+      data: {
+        userId,
+        productId,
+        product: {
+          create: {
+            name: product.title,
+            price: product.price,
+            imageUrl: product.images[2],
+            quantity: product.quantity,
+          },
+        },
+      },
+    });
+    res.status(201).json({
+      message: "Item added",
+      userId: user.id,
+      productId: productId,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 export default router;

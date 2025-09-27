@@ -36,7 +36,7 @@ function Product() {
                 <Link to="/cart">
                   <button
                     onClick={() => {
-                      addToCart(product.id);
+                      addToCart(product);
                     }}
                   >
                     <ShoppingCart />

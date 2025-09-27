@@ -27,10 +27,9 @@ export const MyProvider = ({ children }) => {
       listener.subscription.unsubscribe();
     };
   }, []);
-  // user ke hisab se cart fetch karna
   useEffect(() => {
     if (user) {
-      fetch(`http://localhost:5000/cart/${user.id}`)
+      fetch(`http://localhost:5000/auth/cart/${user.id}`)
         .then((res) => res.json())
         .then((data) => setCart(data));
     } else {
@@ -38,21 +37,25 @@ export const MyProvider = ({ children }) => {
     }
   }, [user]);
 
-  const addToCart = async (productId) => {
+  const addToCart = async (product) => {
     if (!user) return alert("Login first!");
-    const res = await fetch("http://localhost:5000/cart", {
+    const res = await fetch("http://localhost:5000/auth/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id, productId, quantity: 1 }),
+      body: JSON.stringify({
+        userId: `${user.id}`,
+        productId: `${product.id}`,
+        product: product,
+      }),
     });
 
     const newItem = await res.json();
 
-    const existingProduct = cart.find((item) => item.productId === productId);
+    const existingProduct = cart.find((item) => item.productId === product.id);
 
     if (existingProduct) {
       const updatedCart = cart.map((item) =>
-        item.productId === productId
+        item.productId === product.id
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
