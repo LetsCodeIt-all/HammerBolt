@@ -6,12 +6,10 @@ export const MyContext = createContext();
 
 // 2. Create the provider
 export const MyProvider = ({ children }) => {
-  const [value, setValue] = useState([]); // Start with empty array
+  const [ProductsByCategory, setProductsByCategory] = useState([]); // Start with empty array
   const [user, setUser] = useState(null);
-  const [Cart, setCart] = useState(() => {
-    const StoredCart = localStorage.getItem("Cart");
-    return StoredCart ? JSON.parse(StoredCart) : [];
-  });
+  const [cart, setCart] = useState([]);
+
   const getUser = async () => {
     const {
       data: { user },
@@ -19,7 +17,6 @@ export const MyProvider = ({ children }) => {
     setUser(user);
   };
   useEffect(() => {
-    localStorage.setItem("Cart", JSON.stringify(Cart));
     getUser();
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
@@ -29,10 +26,60 @@ export const MyProvider = ({ children }) => {
     return () => {
       listener.subscription.unsubscribe();
     };
-  }, [Cart]);
+  }, []);
+  // user ke hisab se cart fetch karna
+  useEffect(() => {
+    if (user) {
+      fetch(`http://localhost:5000/cart/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => setCart(data));
+    } else {
+      setCart([]);
+    }
+  }, [user]);
+
+  const addToCart = async (productId) => {
+    if (!user) return alert("Login first!");
+    const res = await fetch("http://localhost:5000/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, productId, quantity: 1 }),
+    });
+
+    const newItem = await res.json();
+
+    const existingProduct = cart.find((item) => item.productId === productId);
+
+    if (existingProduct) {
+      const updatedCart = cart.map((item) =>
+        item.productId === productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+      setCart(updatedCart);
+    } else {
+      setCart((prev) => [...prev, newItem]);
+    }
+  };
+
+  // Remove from cart
+  const removeFromCart = async (id) => {
+    await fetch(`http://localhost:5000/cart/${id}`, { method: "DELETE" });
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
+
   return (
     <MyContext.Provider
-      value={{ value, setValue, Cart, setCart, user, setUser }}
+      value={{
+        ProductsByCategory,
+        setProductsByCategory,
+        cart,
+        addToCart,
+        removeFromCart,
+        setCart,
+        user,
+        setUser,
+      }}
     >
       {children}
     </MyContext.Provider>

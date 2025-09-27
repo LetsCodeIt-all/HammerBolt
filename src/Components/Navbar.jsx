@@ -52,7 +52,7 @@ function Navbar() {
           </div>
           <div id="Cart">
             <ShoppingCart style={{ cursor: "pointer" }} />
-            {CartProduct.length}
+            {/* {user.length} */}
           </div>
         </div>
       </div>

@@ -12,8 +12,10 @@ const CategoryPage = () => {
   const { category } = useParams();
   // const [ArrProducts, setArrProducts] = useState([]);
 
-  const { value: ArrProducts, setValue: setArrProducts } =
-    useContext(MyContext);
+  const {
+    ProductsByCategory: ArrProducts,
+    setProductsByCategory: setArrProducts,
+  } = useContext(MyContext);
   const Categorylinks = [
     "Beauty",
     "Tablets",

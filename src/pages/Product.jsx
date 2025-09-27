@@ -6,35 +6,12 @@ import "../Scss/Product.scss";
 import { ChevronsRight, ShoppingCart, CircleUser } from "lucide-react";
 function Product() {
   const { id } = useParams();
-  const { value: ArrProducts } = useContext(MyContext);
+  const { ProductsByCategory: ArrProducts } = useContext(MyContext);
   // const [CartProduct, setCartProduct] = useState([]);
-  const { Cart: CartProduct, setCart: SetCartProduct } = useContext(MyContext); // console.log(ArrProducts, id);
+  const { addToCart } = useContext(MyContext);
   const filterd = ArrProducts.filter((e) => {
     return e.id == parseInt(id);
   });
-  // CartProduct.current = [...CartProduct.current,filterd[0]];
-  function Duplicateitem() {
-    const productToAdd = filterd[0];
-
-    // Check if the item is already in the cart
-    const existingProduct = CartProduct.find(
-      (item) => item.id === productToAdd.id
-    );
-
-    if (existingProduct) {
-      // Map over cart and update quantity
-      const updatedCart = CartProduct.map((item) => {
-        if (item.id === productToAdd.id) {
-          return { ...item, quantity: (item.quantity || 1) + 1 };
-        }
-        return item;
-      });
-      SetCartProduct(updatedCart);
-    } else {
-      // Add new item with quantity: 1
-      SetCartProduct([...CartProduct, { ...productToAdd, quantity: 1 }]);
-    }
-  }
 
   return (
     <div>
@@ -57,7 +34,11 @@ function Product() {
               <i>{product.warrantyInformation}</i>
               <div id="BtnS">
                 <Link to="/cart">
-                  <button onClick={Duplicateitem}>
+                  <button
+                    onClick={() => {
+                      addToCart(product.id);
+                    }}
+                  >
                     <ShoppingCart />
                     Add to Cart
                   </button>

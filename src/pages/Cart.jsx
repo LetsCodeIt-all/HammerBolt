@@ -4,8 +4,10 @@ import "../Scss/Cart.scss";
 import { MyContext } from "../Components/ProductContext";
 
 function Cart() {
-  const { Cart: CartProduct, setCart: SetCartProduct } = useContext(MyContext);
-
+  // const { Cart: CartProduct, setCart: SetCartProduct } = useContext(MyContext);
+  const { cart, addToCart, removeFromCart } = useContext(MyContext);
+  // console.log(cart);
+  // console.log(removeFromCart);
   return (
     <div className="Cart">
       <div className="delivery">
@@ -17,7 +19,7 @@ function Cart() {
         <button>Change</button>
       </div>
       <div className="Products">
-        {CartProduct.map((product, idx) => {
+        {cart.map((product, idx) => {
           return (
             <div className="AddedProduct">
               <img src={product.images[2]} alt="" />
@@ -35,7 +37,8 @@ function Cart() {
                   </button>
                   <button
                     onClick={() => {
-                      SetCartProduct(CartProduct.filter((__, i) => i !== idx));
+                      // SetCartProduct(CartProduct.filter((__, i) => i !== idx));
+                      removeFromCart(product.id);
                     }}
                   >
                     <CircleX />
@@ -55,7 +58,7 @@ function Cart() {
             <p>Price</p>
             <p>Quantity</p>
           </div>
-          {CartProduct.map((product) => {
+          {cart.map((product) => {
             return (
               <div className="PriceDetails">
                 <p>{product.title}</p>
@@ -68,7 +71,7 @@ function Cart() {
         <div className="GateWay">
           <h2>
             Total Price $
-            {CartProduct.reduce(
+            {cart.reduce(
               (sum, product) => sum + product.price * product.quantity,
               0
             )}
