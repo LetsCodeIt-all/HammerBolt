@@ -21,22 +21,22 @@ model User {
   updatedAt    DateTime @updatedAt
 }
 
-  model Product {
-  id       String  @id @default(uuid())
-  name     String
-  price    Float
-  imageUrl String
-  quantity  Int      @default(1)
-  carts    CartItem[]
+model Cart {
+  id       String    @id @default(uuid())
+  userId   String    @unique // 🟢 Ensures one Cart per User
+  
+  // 🟢 Directly relates to Product. Prisma will create a hidden linking table.
+  products Product[] 
 }
 
-model CartItem {
-  id        String   @id @default(uuid())
-  userId    String
-  productId String
-
-  product   Product  @relation(fields: [productId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Product {
+  id        String    @id @default(uuid())
+  name      String
+  price     Float
+  imageUrl String
+  quantity Int 
+  // ... other fields
+  
+  // 🟢 The reverse relation is defined on Product
+  carts     Cart[]    
 }

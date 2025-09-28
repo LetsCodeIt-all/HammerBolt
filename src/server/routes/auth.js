@@ -57,38 +57,77 @@ router.post("/login", async (req, res) => {
 });
 router.get("/cart/:userId", async (req, res) => {
   const { userId } = req.params;
+
   try {
-    const cart = await prisma.CartItem.findMany({ where: { userId } });
-    res.json(cart);
+    // 🟢 Find the unique Cart by userId and include the list of Products
+    const userCart = await prisma.cart.findUnique({
+      where: {
+        userId: userId,
+      },
+      include: {
+        products: true, // Fetches the array of related Product records
+      },
+    });
+
+    if (userCart) {
+      // Returns an object: { id: ..., userId: ..., products: [...] }
+      res.json(userCart);
+    } else {
+      res.status(404).json({ message: "Cart not found for this user." });
+    }
   } catch (err) {
-    res.status(500).json({ error: "Error fetching cart" });
+    console.error("Prisma Error fetching cart:", err);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error: Could not fetch cart." });
   }
 });
 router.post("/cart", async (req, res) => {
-  const { userId, productId, product } = req.body;
+  // We only need userId and productId to manage the many-to-many relation.
+  // The 'product' details are not needed here if the Product already exists.
+  const { userId, productId } = req.body;
 
   try {
-    const user = await prisma.CartItem.create({
+    // 1. UPSERT THE CART: Ensures the user has a Cart record.
+    const cart = await prisma.Cart.upsert({
+      where: { userId: userId }, // Look for a Cart with this userId
+      update: {}, // If found, do nothing
+      create: { userId: userId }, // If not found, create a new Cart
+    });
+
+    // 2. CONNECT THE PRODUCT: Add the product to the cart's 'products' list.
+    // This is done via an update operation on the Cart.
+    const updatedCart = await prisma.Cart.update({
+      where: { id: cart.id },
       data: {
-        userId,
-        productId,
-        product: {
-          create: {
-            name: product.title,
-            price: product.price,
-            imageUrl: product.images[2],
-            quantity: product.quantity,
-          },
+        products: {
+          // Connect the existing Product to this Cart
+          connect: { id: productId },
         },
       },
+      // You may want to include the product list in the response
+      include: {
+        products: true,
+      },
     });
+
     res.status(201).json({
-      message: "Item added",
-      userId: user.id,
-      productId: productId,
+      message: "Item successfully added to cart.",
+      cart: updatedCart,
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    // Log the actual error on the server for debugging
+    console.error("Error adding item to cart:", err);
+
+    // Check for a specific error (e.g., trying to add the same item twice)
+    if (err.code === "P2014") {
+      // P2014 is Prisma's code for relation violations
+      return res.status(409).json({ error: "Product is already in the cart." });
+    }
+
+    res
+      .status(500)
+      .json({ error: "Internal Server Error. Could not add item." });
   }
 });
 export default router;

@@ -43,8 +43,8 @@ export const MyProvider = ({ children }) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        userId: `${user.id}`,
-        productId: `${product.id}`,
+        userId: user.id,
+        productId: product.id,
         product: product,
       }),
     });
