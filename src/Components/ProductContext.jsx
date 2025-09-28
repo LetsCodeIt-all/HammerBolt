@@ -44,25 +44,24 @@ export const MyProvider = ({ children }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userId: user.id,
-        productId: product.id,
         product: product,
       }),
     });
+    console.log(res);
+    // const newItem = await res.json();
 
-    const newItem = await res.json();
+    // const existingProduct = cart.find((item) => item.productId === product.id);
 
-    const existingProduct = cart.find((item) => item.productId === product.id);
-
-    if (existingProduct) {
-      const updatedCart = cart.map((item) =>
-        item.productId === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-      setCart(updatedCart);
-    } else {
-      setCart((prev) => [...prev, newItem]);
-    }
+    // if (existingProduct) {
+    //   const updatedCart = cart.map((item) =>
+    //     item.productId === product.id
+    //       ? { ...item, quantity: item.quantity + 1 }
+    //       : item
+    //   );
+    //   setCart(updatedCart);
+    // } else {
+    // setCart((prev) => [...prev, newItem]);
+    // }
   };
 
   // Remove from cart

@@ -59,13 +59,30 @@ router.get("/cart/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
-    // 🟢 Find the unique Cart by userId and include the list of Products
-    const userCart = await prisma.cart.findUnique({
+    // 🟢 Find the unique Cart by userId or create one if it doesn't exist
+    const userCart = await prisma.Cart.upsert({
       where: {
         userId: userId,
       },
+      update: {},
+      create: {
+        // Define the data to create a new Cart
+        userId: userId,
+        // Add any other required fields for a new Cart here
+      },
+      // The 'include' block must be *outside* 'update' and 'create'
+      // to include relations in the final result.
       include: {
-        products: true, // Fetches the array of related Product records
+        items: {
+          // Include the related Product data for each item
+          include: {
+            product: true,
+          },
+          // Order items by creation date or name (optional)
+          orderBy: {
+            // Example: orderBy: { createdAt: 'asc' }
+          },
+        },
       },
     });
 
@@ -83,51 +100,83 @@ router.get("/cart/:userId", async (req, res) => {
   }
 });
 router.post("/cart", async (req, res) => {
-  // We only need userId and productId to manage the many-to-many relation.
-  // The 'product' details are not needed here if the Product already exists.
-  const { userId, productId } = req.body;
+  // Assuming the request body contains the user ID, product ID, and optional quantity
+  const { userId, productId, quantity } = req.body;
+
+  // Basic input validation
+  if (!userId || !productId) {
+    return res.status(400).json({ error: "Missing userId or productId." });
+  }
 
   try {
-    // 1. UPSERT THE CART: Ensures the user has a Cart record.
-    const cart = await prisma.Cart.upsert({
-      where: { userId: userId }, // Look for a Cart with this userId
-      update: {}, // If found, do nothing
-      create: { userId: userId }, // If not found, create a new Cart
-    });
+    // Call the combined upsert function
+    const cartItem = await addProductToCart(userId, productId, quantity);
 
-    // 2. CONNECT THE PRODUCT: Add the product to the cart's 'products' list.
-    // This is done via an update operation on the Cart.
-    const updatedCart = await prisma.Cart.update({
-      where: { id: cart.id },
-      data: {
-        products: {
-          // Connect the existing Product to this Cart
-          connect: { id: productId },
-        },
-      },
-      // You may want to include the product list in the response
-      include: {
-        products: true,
-      },
-    });
-
-    res.status(201).json({
-      message: "Item successfully added to cart.",
-      cart: updatedCart,
+    // Return the created/updated cart item and a success status
+    res.status(200).json({
+      message: "Product quantity updated in cart.",
+      item: cartItem,
     });
   } catch (err) {
-    // Log the actual error on the server for debugging
-    console.error("Error adding item to cart:", err);
-
-    // Check for a specific error (e.g., trying to add the same item twice)
-    if (err.code === "P2014") {
-      // P2014 is Prisma's code for relation violations
-      return res.status(409).json({ error: "Product is already in the cart." });
-    }
-
-    res
-      .status(500)
-      .json({ error: "Internal Server Error. Could not add item." });
+    // Handle specific errors from the function
+    console.error("Failed to process cart request:", err);
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: err.message,
+    });
   }
 });
+async function addProductToCart(userId, productId, quantity = 1) {
+  // 1. Find or Create the User's Cart
+  const cart = await upsertCart(userId);
+
+  // 2. Define the Unique Identifier for the CartItem
+  //    This uses the unique constraint @@unique([cartId, productId]) defined on your model.
+  const itemIdentifier = {
+    cartId_productId: {
+      cartId: cart.id,
+      productId: productId,
+    },
+  };
+
+  try {
+    // 3. Upsert the CartItem:
+    //    - If the CartItem exists (same cart, same product), update the quantity.
+    //    - If the CartItem doesn't exist, create a new one.
+    const updatedCartItem = await prisma.CartItem.upsert({
+      where: itemIdentifier,
+      update: {
+        // 🟢 UPDATE LOGIC: If the item exists, increment its quantity.
+        quantity: {
+          increment: quantity,
+        },
+      },
+      create: {
+        // 🟢 CREATE LOGIC: If the item is new, set the quantity.
+        cartId: cart.id,
+        productId: productId,
+        quantity: quantity,
+      },
+      // Include the related product data in the response
+      include: {
+        product: true,
+      },
+    });
+
+    return updatedCartItem;
+  } catch (error) {
+    // This often catches errors if the productId doesn't exist in the Product table.
+    console.error("Error during CartItem upsert:", error);
+    throw new Error("Could not add product to cart. Check if product exists.");
+  }
+}
+// Assumes prisma client is initialized: const prisma = new PrismaClient();
+
+async function upsertCart(userId) {
+  return prisma.Cart.upsert({
+    where: { userId: userId },
+    update: {}, // No updates needed if it exists, just return it
+    create: { userId: userId }, // Create a new cart if not found
+  });
+}
 export default router;
