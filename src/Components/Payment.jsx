@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import style from "../Scss/Checkout.module.scss";
+import { MyContext } from "./ProductContext";
 function Payment() {
-  const Items = JSON.parse(localStorage.getItem("Cart"));
-  console.log(Items);
+  const { cart, addToCart, removeFromCart } = useContext(MyContext);
   return (
     <div className={style.Payment}>
       <div className={style.PriceDetails}>
@@ -10,7 +10,7 @@ function Payment() {
           <p>Product</p>
           <p>Price</p>
         </div>
-        {Items?.map((e) => {
+        {cart?.map((e) => {
           // console.log(e);
           return (
             <div>
@@ -23,8 +23,8 @@ function Payment() {
           <p>Total Price</p>
           <p>
             $
-            {Items?.reduce(
-              (sum, product) => sum + product.price * product.quantity,
+            {cart?.reduce(
+              (sum, product) => sum + product.price * (product.quantity || 1),
               0
             )}
           </p>
@@ -32,7 +32,7 @@ function Payment() {
       </div>
       <div className={style.PaymentMethods}>
         <h1>Payment Methods</h1>
-        <input type="radio" id="radio" name="radio" />
+        <input type="radio" id="radio" name="radio" required />
         <label htmlFor="radio">
           <div>
             <h2>Continue with</h2>
@@ -64,15 +64,11 @@ function Payment() {
             </p>
           </div>
         </label>
-        <input type="radio" id="radio1" name="radio" />
+        <input type="radio" id="radio1" name="radio" required />
         <label htmlFor="radio1">
           <div>
             <h2>Cash on Delivery</h2>
           </div>
-        </label>
-        <input type="radio" id="radio2" name="radio" />
-        <label htmlFor="radio2">
-          <div>Card Details</div>
         </label>
       </div>
     </div>

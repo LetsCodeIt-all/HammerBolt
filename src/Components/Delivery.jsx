@@ -34,7 +34,7 @@ function Delivery() {
             return (
               <div className={style.Divein}>
                 <p>
-                  <input type="radio" name="method" id={i} />
+                  <input type="radio" name="method" id={i} required />
                 </p>
 
                 <label htmlFor={i}>

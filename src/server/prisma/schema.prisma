@@ -1,78 +1,32 @@
 // This is your Prisma schema file,
-
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-
-
 generator client {
-
-  provider = "prisma-client-js"
-
+  provider = "prisma-client-js"
 }
 
-
-
 datasource db {
-
-  provider = "postgresql"
-
-  url      = env("DATABASE_URL")
-
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  name         String   @unique   
-
-  id           String   @id @default(uuid())
-
-  email        String   @unique
-
-  passwordHash String
-
-  createdAt    DateTime @default(now())
-
-  updatedAt    DateTime @updatedAt
-
+  // Parent side: No fields/references arguments needed here for a one-to-one
+  Cart         Cart?
 }
 
 model Cart {
-  id        String     @id @default(uuid())
-  userId    String     @unique 
-  // 🟢 Relationship: A Cart has many CartItems
-  items     CartItem[] 
-}
-
-model Product {
-  id        String     @id @default(uuid())
-  name      String
-  price     Float
-  imageUrl String
-  // 🔴 REMOVE: The global 'quantity' field here (it should be in CartItem)
-  
-  // 🟢 Relationship: A Product can be in many CartItems
-  items     CartItem[]
-}
-
-// ⭐️ The new Junction Model (CartItem) ⭐️
-model CartItem {
   id        String    @id @default(uuid())
-  quantity  Int       @default(1) // 👈 Stores the number of this product in the cart
+  userId    String    @unique
+  products  Json      @default("[]") // Stores array of product objects
 
-  // Many-to-One: Link to Cart
-  cartId    String
-  cart      Cart      @relation(fields: [cartId], references: [id])
-
-  // Many-to-One: Link to Product
-  productId String
-  product   Product   @relation(fields: [productId], references: [id])
-  
-  // Ensures a user only has one entry for a specific product in their cart
-  @@unique([cartId, productId]) 
+  // Child side: This defines the foreign key and the relation
+  User      User      @relation(fields: [userId], references: [id])
 }

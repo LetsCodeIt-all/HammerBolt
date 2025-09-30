@@ -5,29 +5,48 @@ import { PrismaClient } from "@prisma/client";
 
 const router = express.Router();
 const prisma = new PrismaClient();
-const JWT_SECRET = "supersecret123";
+// ⚠️ CRITICAL SECURITY FIX: Load JWT_SECRET from environment variables
+const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_for_dev_only";
+
+// -----------------------------------------------------
+// 1. AUTH ROUTES (NO CHANGE HERE)
+// -----------------------------------------------------
 
 // ✅ Signup
 router.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
+  // Basic input validation
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "Missing required fields." });
+  }
 
   try {
-    // check if user exists
+    // Check if user exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser)
+    if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
+    }
 
-    // hash password
+    // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // save new user
+    // Create user + empty cart (using nested write)
     const user = await prisma.user.create({
-      data: { name, email, passwordHash },
+      data: {
+        name,
+        email,
+        passwordHash,
+        Cart: { create: {} },
+      },
+      include: { Cart: true },
     });
 
-    res.status(201).json({ message: "User created", userId: user.id });
+    res
+      .status(201)
+      .json({ message: "User created", userId: user.id, cartId: user.Cart.id });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Signup error:", err);
+    res.status(500).json({ error: "Failed to create user." });
   }
 });
 
@@ -42,141 +61,119 @@ router.post("/login", async (req, res) => {
     const isValid = await bcrypt.compare(password, user.passwordHash);
     if (!isValid) return res.status(401).json({ message: "Invalid password" });
 
-    // create JWT token
+    // Create JWT token
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-
+    // Removed localStorage setting for a clean backend file
+    // console.log("token ji" + token);
     res.json({
       token,
       user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to login." });
   }
 });
-router.get("/cart/:userId", async (req, res) => {
-  const { userId } = req.params;
 
-  try {
-    // 🟢 Find the unique Cart by userId or create one if it doesn't exist
-    const userCart = await prisma.Cart.upsert({
-      where: {
-        userId: userId,
-      },
-      update: {},
-      create: {
-        // Define the data to create a new Cart
-        userId: userId,
-        // Add any other required fields for a new Cart here
-      },
-      // The 'include' block must be *outside* 'update' and 'create'
-      // to include relations in the final result.
-      include: {
-        items: {
-          // Include the related Product data for each item
-          include: {
-            product: true,
-          },
-          // Order items by creation date or name (optional)
-          orderBy: {
-            // Example: orderBy: { createdAt: 'asc' }
-          },
-        },
-      },
-    });
+// -----------------------------------------------------
+// 2. UNSECURED CART ROUTES (MODIFIED)
+// -----------------------------------------------------
 
-    if (userCart) {
-      // Returns an object: { id: ..., userId: ..., products: [...] }
-      res.json(userCart);
-    } else {
-      res.status(404).json({ message: "Cart not found for this user." });
-    }
-  } catch (err) {
-    console.error("Prisma Error fetching cart:", err);
-    res
-      .status(500)
-      .json({ error: "Internal Server Error: Could not fetch cart." });
-  }
-});
+// ✅ Add product to cart (Authentication REMOVED)
 router.post("/cart", async (req, res) => {
-  // Assuming the request body contains the user ID, product ID, and optional quantity
-  const { userId, productId, quantity } = req.body;
+  // ⚠️ UNSECURED: userId is now taken directly from the request body
+  const { userId, product } = req.body;
 
-  // Basic input validation
-  if (!userId || !productId) {
-    return res.status(400).json({ error: "Missing userId or productId." });
+  if (!userId || !product) {
+    return res.status(400).json({ error: "Missing userId or product object" });
   }
 
   try {
-    // Call the combined upsert function
-    const cartItem = await addProductToCart(userId, productId, quantity);
+    // 1. Fetch the cart
+    const cart = await prisma.cart.findUnique({ where: { userId } });
 
-    // Return the created/updated cart item and a success status
-    res.status(200).json({
-      message: "Product quantity updated in cart.",
-      item: cartItem,
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ error: "Cart not found for this user. Integrity error." });
+    }
+
+    // IMPORTANT: When working with Prisma's Json field, you need to cast the
+    // retrieved field back to an array for modification.
+    const currentProducts = Array.isArray(cart.products) ? cart.products : [];
+    const updatedProducts = [...currentProducts, product];
+
+    // 2. Update the cart
+    const updatedCart = await prisma.cart.update({
+      where: { userId },
+      data: { products: updatedProducts },
     });
+
+    res.json(updatedCart);
   } catch (err) {
-    // Handle specific errors from the function
-    console.error("Failed to process cart request:", err);
-    res.status(500).json({
-      error: "Internal Server Error",
-      details: err.message,
-    });
+    console.error("Add to cart error:", err);
+    res.status(500).json({ error: "Failed to add product to cart" });
   }
 });
-async function addProductToCart(userId, productId, quantity = 1) {
-  // 1. Find or Create the User's Cart
-  const cart = await upsertCart(userId);
 
-  // 2. Define the Unique Identifier for the CartItem
-  //    This uses the unique constraint @@unique([cartId, productId]) defined on your model.
-  const itemIdentifier = {
-    cartId_productId: {
-      cartId: cart.id,
-      productId: productId,
-    },
-  };
+// ✅ Get cart (Authentication REMOVED)
+// Now only requires userId in the URL params
+router.get("/cart/:userId", async (req, res) => {
+  // ⚠️ UNSECURED: userId is taken directly from the URL parameter
+  const userId = req.params.userId; // Corrected from req.params()
+  console.log(userId);
+  try {
+    let cart = await prisma.cart.findUnique({ where: { userId } });
+
+    if (!cart) {
+      cart = await prisma.cart.create({
+        data: { userId },
+      });
+      return res.status(404).json({ error: "Cart not found" });
+    }
+    res.json(cart);
+  } catch (err) {
+    console.error("Fetch cart error:", err);
+    res.status(500).json({ error: "Failed to fetch cart" });
+  }
+});
+
+// 🌟 Remove product from cart (Authentication REMOVED)
+// Un-commented and modified for un-secured operation
+router.delete("/cart/:userId/:productId", async (req, res) => {
+  // ⚠️ UNSECURED: userId and productId are taken directly from the URL parameters
+  const { userId, productId } = req.params;
+
+  if (!userId || !productId) {
+    return res.status(400).json({ error: "Missing user or product ID." });
+  }
 
   try {
-    // 3. Upsert the CartItem:
-    //    - If the CartItem exists (same cart, same product), update the quantity.
-    //    - If the CartItem doesn't exist, create a new one.
-    const updatedCartItem = await prisma.CartItem.upsert({
-      where: itemIdentifier,
-      update: {
-        // 🟢 UPDATE LOGIC: If the item exists, increment its quantity.
-        quantity: {
-          increment: quantity,
-        },
-      },
-      create: {
-        // 🟢 CREATE LOGIC: If the item is new, set the quantity.
-        cartId: cart.id,
-        productId: productId,
-        quantity: quantity,
-      },
-      // Include the related product data in the response
-      include: {
-        product: true,
-      },
+    const cart = await prisma.cart.findUnique({ where: { userId } });
+
+    if (!cart) {
+      return res.status(404).json({ error: "Cart not found." });
+    }
+
+    const currentProducts = Array.isArray(cart.products) ? cart.products : [];
+
+    // Filter the array to remove the product with the given ID
+    const updatedProducts = currentProducts.filter(
+      (p) => p.id !== productId // Assuming the product object has an 'id' key
+    );
+
+    // Update the cart
+    const updatedCart = await prisma.cart.update({
+      where: { userId },
+      data: { products: updatedProducts },
     });
 
-    return updatedCartItem;
-  } catch (error) {
-    // This often catches errors if the productId doesn't exist in the Product table.
-    console.error("Error during CartItem upsert:", error);
-    throw new Error("Could not add product to cart. Check if product exists.");
+    res.json({ message: `Product ${productId} removed.`, cart: updatedCart });
+  } catch (err) {
+    console.error("Remove from cart error:", err);
+    res.status(500).json({ error: "Failed to remove product from cart" });
   }
-}
-// Assumes prisma client is initialized: const prisma = new PrismaClient();
+});
 
-async function upsertCart(userId) {
-  return prisma.Cart.upsert({
-    where: { userId: userId },
-    update: {}, // No updates needed if it exists, just return it
-    create: { userId: userId }, // Create a new cart if not found
-  });
-}
 export default router;
