@@ -1,6 +1,6 @@
 import React from "react";
 import style from "../Scss/Checkout.module.scss";
-function Delivery() {
+function Delivery({ setDelivery }) {
   const ShipingMethods = [
     {
       delivery: "Standard Delivery",
@@ -29,33 +29,47 @@ function Delivery() {
       </div>
       <div className={style.dateOfDelivery}>
         <h2>Shipping Method</h2>
-        <form>
-          {ShipingMethods?.map((method, i) => {
-            return (
-              <div className={style.Divein}>
-                <p>
-                  <input type="radio" name="method" id={i} required />
-                </p>
+        {/* <form> */}
+        {ShipingMethods?.map((method, i) => {
+          return (
+            <div className={style.Divein}>
+              <p>
+                <input
+                  type="radio"
+                  name="method"
+                  id={i}
+                  required={i === 1}
+                  onChange={(e) => {
+                    setDelivery(method);
+                  }}
+                />
+              </p>
 
-                <label htmlFor={i}>
-                  <div className={style.innerBx}>
-                    <div className={style.innerMost}>
-                      <h3>{method.delivery}</h3>
-                      <p>
-                        {method.date ? (
-                          method.date
-                        ) : (
-                          <input type="date"></input>
-                        )}
-                      </p>
-                    </div>
-                    <h3>{method.price}</h3>
+              <label htmlFor={i}>
+                <div className={style.innerBx}>
+                  <div className={style.innerMost}>
+                    <h3>{method.delivery}</h3>
+                    <p>
+                      {method.date ? (
+                        method.date
+                      ) : (
+                        <input
+                          type="date"
+                          required={i == 2}
+                          onChange={(e) => {
+                            setDelivery([method, e.target.value]);
+                          }}
+                        ></input>
+                      )}
+                    </p>
                   </div>
-                </label>
-              </div>
-            );
-          })}
-        </form>
+                  <h3>{method.price}</h3>
+                </div>
+              </label>
+            </div>
+          );
+        })}
+        {/* </form> */}
       </div>
     </div>
   );

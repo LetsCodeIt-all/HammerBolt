@@ -248,29 +248,37 @@
         border: 2px solid blue;
       }
     }
-    div {
+    > div {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 0.1px solid rgb(187, 186, 186);
-      padding: 10px;
-      border-radius: 10px;
-      margin: 5px;
-      height: 60px;
-      transition: all 0.3s ease-in;
-      cursor: pointer;
-      h2 {
-        font-size: 20px;
-      }
 
-      p {
-        width: 80%;
-        display: flex;
-        justify-content: space-around;
-      }
-      img {
-        height: 30px;
-        margin: 2px;
+      justify-content: space-around;
+      > div {
+        div {
+          display: flex;
+
+          justify-content: space-between;
+          align-items: center;
+          border: 2px solid rgb(187, 186, 186);
+          padding: 10px;
+          border-radius: 10px;
+          margin: 5px;
+          height: 60px;
+          transition: all 0.3s ease-in;
+          cursor: pointer;
+          h2 {
+            font-size: 20px;
+          }
+
+          p {
+            width: 80%;
+            display: flex;
+            justify-content: space-around;
+          }
+          img {
+            height: 30px;
+            margin: 2px;
+          }
+        }
       }
     }
   }
