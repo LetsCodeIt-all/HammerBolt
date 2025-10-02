@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import style from "../Scss/Checkout.module.scss";
-import { MyContext } from "./ProductContext";
+import SmallComponent from "./SmallComponent";
 function Payment({ setPayment }) {
-  const { cart, addToCart, removeFromCart } = useContext(MyContext);
   const payment = [
     {
       id: "stripe",
@@ -17,41 +16,20 @@ function Payment({ setPayment }) {
   ];
   return (
     <div className={style.Payment}>
-      <div className={style.PriceDetails}>
-        <div>
-          <p>Product</p>
-          <p>Price</p>
-        </div>
-        {cart?.map((e) => {
-          // console.log(e);
-          return (
-            <div>
-              <p>{e.title}</p>
-              <p>${e.price}</p>
-            </div>
-          );
-        })}
-        <div>
-          <p>Total Price</p>
-          <p>
-            $
-            {cart?.reduce(
-              (sum, product) => sum + product.price * (product.quantity || 1),
-              0
-            )}
-          </p>
-        </div>
-      </div>
+      <SmallComponent />
       <div className={style.PaymentMethods}>
         <h1>Payment Methods</h1>
         <div>
           {payment.map((option, index) => (
-            <div key={option.id}>
+            <div key={option.id} style={{ display: "flex" }}>
               <input
                 type="radio"
                 id={option.id}
                 name="payment"
                 required={index === payment.length - 1} // only last one required
+                onChange={() => {
+                  setPayment(option);
+                }}
               />
               <label htmlFor={option.id}>
                 <div>

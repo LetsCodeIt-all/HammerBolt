@@ -6,15 +6,21 @@ function Delivery({ setDelivery }) {
       delivery: "Standard Delivery",
       date: "after 2 days delivery",
       price: "Free",
+      address:
+        "PMO (Prime Minister's Office) New Delhi, E Block, E Block, Central Secretariat, New Delhi, Delhi 110011",
     },
     {
       delivery: "Express Delivery",
       date: "same day delivery",
       price: "$10",
+      address:
+        "PMO (Prime Minister's Office) New Delhi, E Block, E Block, Central Secretariat, New Delhi, Delhi 110011",
     },
     {
       delivery: "Scheduled delivery",
       price: "$20",
+      address:
+        "PMO (Prime Minister's Office) New Delhi, E Block, E Block, Central Secretariat, New Delhi, Delhi 110011",
     },
   ];
 
