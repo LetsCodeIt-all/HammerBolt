@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import logo from "../assets/logo.png";
 import { Link } from "react-router";
-
+import img from "../assets/defaultProfile.jpg";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -12,6 +12,7 @@ import { MyContext } from "./ProductContext";
 function Navbar() {
   const { Cart: CartProduct } = useContext(MyContext);
   const { user } = useContext(MyContext);
+  console.log(user);
   // console.log(user["identities"][0]["identity_data"]["picture"]);
   return (
     <>
@@ -34,7 +35,7 @@ function Navbar() {
           >
             {user ? (
               <img
-                src={user["identities"][0]["identity_data"]["picture"]}
+                src={user?.identities?.[0]?.identity_data?.picture || img}
                 alt=""
                 className="avatar"
               />
@@ -42,7 +43,11 @@ function Navbar() {
               <CircleUserRound />
             )}
             {user ? (
-              `${user["identities"][0]["identity_data"]["full_name"]}`
+              `${
+                user?.["identities"]?.[0]?.["identity_data"]?.["full_name"] ||
+                user?.name ||
+                "User"
+              }`
             ) : (
               <h4>Log in</h4>
             )}

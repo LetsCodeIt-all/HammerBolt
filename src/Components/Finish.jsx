@@ -12,11 +12,11 @@ function Finish({ delivery, payment }) {
       <div className={style.DeliveryLoCM}>
         <h2>Delivery Address & Method</h2>
         <h4>
-          <p>{delivery[0]?.delivery}</p>
-          <p>{delivery[0]?.price}</p>
+          <p>{delivery[0] ? delivery[0].delivery : delivery.delivery}</p>
+          <p>{delivery[0] ? delivery[0].price : delivery.price}</p>
         </h4>
 
-        {delivery[0]?.address}
+        {delivery[0] ? delivery[0].address : delivery.address}
         <p>Delivery Date:- {delivery[1] ? delivery[1] : delivery.date}</p>
       </div>
     </div>

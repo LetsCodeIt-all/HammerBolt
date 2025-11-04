@@ -7,27 +7,43 @@ export const MyContext = createContext();
 // 2. Create the provider
 export const MyProvider = ({ children }) => {
   const [ProductsByCategory, setProductsByCategory] = useState([]);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user")) || null
+  );
   const [cart, setCart] = useState(null); // Changed to null to indicate loading/no cart initially
+  const [token, setToken] = useState(null);
 
   const getUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    setUser(user);
+    try {
+      const res = await fetch("http://localhost:5000/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res, "from get user");
+      if (!res.ok) throw new Error("Failed to fetch user");
+
+      const data = await res.json();
+      setUser(data); // ✅ Set the actual user data
+      localStorage.setItem("user", JSON.stringify(data));
+    } catch (err) {
+      console.error(err);
+      setUser(null); // optional: clear user on error
+    }
   };
 
   useEffect(() => {
-    getUser();
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user || null);
-      }
-    );
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
+    if (token) getUser();
+
+    // const { data: listener } = supabase.auth.onAuthStateChange(
+    //   (_event, session) => {
+    //     // setUser(session?.user || null);
+    //   }
+    // );
+    // return () => {
+    //   // listener.subscription.unsubscribe();
+    // };
+  }, [token]);
 
   // Fetch cart when user changes
   useEffect(() => {
@@ -118,6 +134,7 @@ export const MyProvider = ({ children }) => {
         setCart,
         user,
         setUser,
+        setToken,
       }}
     >
       {children}

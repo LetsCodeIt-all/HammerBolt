@@ -5,7 +5,7 @@ import { supabase } from "../SupabaseClient.js";
 import { MyContext } from "../Components/ProductContext";
 function Login() {
   const [issignUp, setsignUp] = useState(false);
-  const { setUser } = useContext(MyContext);
+  const { setToken, setUser } = useContext(MyContext);
   const {
     register,
     handleSubmit,
@@ -30,7 +30,8 @@ function Login() {
       }
 
       const result = await res.json();
-      setUser(result);
+      setToken(result.token);
+      console.log(result.token + " login yaha  se result.token");
       console.log("Backend auth success:", result);
     } catch (error) {
       console.error("Error during login:", error.message);
