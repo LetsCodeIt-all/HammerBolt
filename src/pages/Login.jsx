@@ -31,8 +31,6 @@ function Login() {
 
       const result = await res.json();
       setToken(result.token);
-      console.log(result.token + " login yaha  se result.token");
-      console.log("Backend auth success:", result);
     } catch (error) {
       console.error("Error during login:", error.message);
       alert(error.message);

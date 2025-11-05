@@ -7,8 +7,7 @@ import { Link } from "react-router";
 function Cart() {
   // const { Cart: CartProduct, setCart: SetCartProduct } = useContext(MyContext);
   const { cart, addToCart, removeFromCart } = useContext(MyContext);
-  console.log(cart);
-  // console.log(removeFromCart);
+
   return (
     <div className="Cart">
       <div className="delivery">
@@ -22,13 +21,13 @@ function Cart() {
       <div className="Products">
         {cart?.map((product, idx) => {
           return (
-            <div className="AddedProduct">
-              <img src={product.images[2]} alt="" />
+            <div className="AddedProduct" key={idx}>
+              <img src={product?.images?.[2]} alt="" />
               <div className="otherDetails">
-                <p>Quantity: {product.quantity || 1}</p>
+                <p>Quantity: {product?.quantity || 1}</p>
 
-                <h1>{product.title}</h1>
-                <h2>{product.price}</h2>
+                <h1>{product?.title}</h1>
+                <h2>{product?.price}</h2>
 
                 <p>Delivery by 8 Jan 2035</p>
                 <div>
@@ -39,7 +38,7 @@ function Cart() {
                   <button
                     onClick={() => {
                       // SetCartProduct(CartProduct.filter((__, i) => i !== idx));
-                      removeFromCart(product.id);
+                      removeFromCart(product?.meta?.barcode);
                     }}
                   >
                     <CircleX />
@@ -62,9 +61,9 @@ function Cart() {
           {cart?.map((product) => {
             return (
               <div className="PriceDetails">
-                <p>{product.title}</p>
-                <p>+${product.price * (product.quantity || 1)}</p>
-                <p>{product.quantity || 1}</p>
+                <p>{product?.title}</p>
+                <p>+${product?.price * (product?.quantity || 1)}</p>
+                <p>{product?.quantity || 1}</p>
               </div>
             );
           })}
@@ -72,7 +71,7 @@ function Cart() {
         <div className="GateWay">
           <h2>
             Total Price $
-            {cart?.reduce((sum, product) => sum + product.price, 0)}
+            {cart?.reduce((sum, product) => sum + product?.price, 0)}
           </h2>
           <Link
             to={cart?.length !== 0 ? `/checkout` : "/"}

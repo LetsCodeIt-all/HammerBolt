@@ -10,9 +10,12 @@ export const MyProvider = ({ children }) => {
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user")) || null
   );
-  const [cart, setCart] = useState(null); // Changed to null to indicate loading/no cart initially
+  const [cart, setCart] = useState(() => {
+    if (user) {
+      return user.Cart.products;
+    }
+  }); // Changed to null to indicate loading/no cart initially
   const [token, setToken] = useState(null);
-
   const getUser = async () => {
     try {
       const res = await fetch("http://localhost:5000/auth/me", {
@@ -20,12 +23,10 @@ export const MyProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(res, "from get user");
       if (!res.ok) throw new Error("Failed to fetch user");
 
       const data = await res.json();
       setUser(data); // ✅ Set the actual user data
-      localStorage.setItem("user", JSON.stringify(data));
     } catch (err) {
       console.error(err);
       setUser(null); // optional: clear user on error
@@ -46,81 +47,81 @@ export const MyProvider = ({ children }) => {
   }, [token]);
 
   // Fetch cart when user changes
+
+  // fetch(`http://localhost:5000/auth/cart/${user.id}`)
+  // .then(async (res) => {
+  // if (!res.ok) {
+  //     if (res.status === 404) {
+  //       console.log("No cart found, using empty cart");
+  //       return { products: [] }; // fallback
+  //     }
+  //     const error = await res.json();
+  //     throw new Error(error.error || "Failed to fetch cart");
+  //   }
+  //   return res.json();
+  // })
+  // .then((data) =>
+  // )
+  // .catch((err) => {
+  //   console.error("Cart fetch failed:", err);
+  //   setCart([]);
+  // });
   useEffect(() => {
-    if (!user) {
-      setCart([]);
-      return;
-    }
-    fetch(`http://localhost:5000/auth/cart/${user.id}`)
-      .then(async (res) => {
-        if (!res.ok) {
-          if (res.status === 404) {
-            console.log("No cart found, using empty cart");
-            return { products: [] }; // fallback
-          }
-          const error = await res.json();
-          throw new Error(error.error || "Failed to fetch cart");
-        }
-        return res.json();
-      })
-      .then((data) => setCart(data.products || []))
-      .catch((err) => {
-        console.error("Cart fetch failed:", err);
-        setCart([]);
-      });
-  }, [user]);
-
-  const addToCart = async (product) => {
-    if (!user) return alert("Login first to use a cart!"); // Still requires a logged-in user to have a userId
-
-    try {
-      // ⚠️ UNSECURED: Sending userId in the body for the POST request
-      const response = await fetch("http://localhost:5000/auth/cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    if (user && Array.isArray(cart)) {
+      setUser((prev) => ({
+        ...prev,
+        Cart: {
+          ...prev.Cart,
+          products: [...cart],
         },
-        body: JSON.stringify({ userId: user.id, product }), // Send both userId and product
-      });
-
-      if (!response.ok) throw new Error("Failed to add product to cart");
-
-      const updatedCart = await response.json();
-
-      // Update local state (optional, can refetch cart instead)
-      // The backend returns the full cart, assuming you want the product array:
-      if (updatedCart && updatedCart.products) {
-        setCart(updatedCart.products);
-      }
-    } catch (error) {
-      console.error("Add to cart error:", error);
+      }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...user,
+          Cart: { ...user.Cart, products: [...cart] },
+        })
+      );
     }
+  }, [cart]);
+
+  const addToCart = async (Product) => {
+    console.log(Product);
+    if (!user) return alert("Login first to use a cart!");
+    // setCart([...cart, Product]);
+
+    setCart([
+      ...cart.map((product) => {
+        return product.meta.barcode != Product.meta.barcode;
+      }),
+      (Product.quantity = parseInt(Product.quantity) + 1),
+    ]);
   };
 
   // Remove from cart
   const removeFromCart = async (productId) => {
     if (!user) return alert("Login first!");
+    // try {
+    //   // ⚠️ UNSECURED: Include userId in the URL for the DELETE request
+    //   const response = await fetch(
+    //     `http://localhost:5000/auth/cart/${user.id}/${productId}`,
+    //     {
+    //       method: "DELETE",
+    //     }
+    //   );
 
-    try {
-      // ⚠️ UNSECURED: Include userId in the URL for the DELETE request
-      const response = await fetch(
-        `http://localhost:5000/auth/cart/${user.id}/${productId}`,
-        {
-          method: "DELETE",
-        }
-      );
+    //   if (!response.ok) throw new Error("Failed to remove product from cart");
 
-      if (!response.ok) throw new Error("Failed to remove product from cart");
+    //   const updatedCartData = await response.json();
 
-      const updatedCartData = await response.json();
-
-      // Update local state with the products array from the backend's response
-      if (updatedCartData.cart && updatedCartData.cart.products) {
-        setCart(updatedCartData.cart.products);
-      }
-    } catch (error) {
-      console.error("Remove from cart error:", error);
-    }
+    //   // Update local state with the products array from the backend's response
+    //   if (updatedCartData.cart && updatedCartData.cart.products) {
+    //     setCart(updatedCartData.cart.products);
+    //   }
+    // } catch (error) {
+    //   console.error("Remove from cart error:", error);
+    // }
+    setCart(cart.filter((product) => product?.meta?.barcode != productId));
   };
 
   return (

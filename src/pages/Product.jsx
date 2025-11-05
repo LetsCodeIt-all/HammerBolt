@@ -8,35 +8,35 @@ function Product() {
   const { id } = useParams();
   const { ProductsByCategory: ArrProducts } = useContext(MyContext);
   // const [CartProduct, setCartProduct] = useState([]);
-  const { addToCart } = useContext(MyContext);
+  const { addToCart, cart, setCart } = useContext(MyContext);
   const filterd = ArrProducts.filter((e) => {
     return e.id == parseInt(id);
   });
 
   return (
     <div>
-      {filterd.map((product) => {
+      {filterd.map((Product) => {
         return (
-          <div key={product.id} className="ProductDetails">
+          <div key={Product.id} className="ProductDetails">
             <div className="images">
-              <img src={product.images[0]} alt="" />
+              <img src={Product.images[0]} alt="" />
             </div>
 
             <div className="details">
-              <h1>{product.title}</h1>
-              <p>{product.description}</p>
-              <h2>${product.price}</h2>
+              <h1>{Product.title}</h1>
+              <p>{Product.description}</p>
+              <h2>${Product.price}</h2>
               <div id="return">
-                <span>{product.rating}/5</span>
-                <b>{product.returnPolicy}</b>
+                <span>{Product.rating}/5</span>
+                <b>{Product.returnPolicy}</b>
               </div>
 
-              <i>{product.warrantyInformation}</i>
+              <i>{Product.warrantyInformation}</i>
               <div id="BtnS">
                 <Link to="/cart">
                   <button
                     onClick={() => {
-                      addToCart(product);
+                      addToCart({ ...Product, quantity: 1 });
                     }}
                   >
                     <ShoppingCart />
@@ -51,7 +51,7 @@ function Product() {
               </div>
               <div className="Reviews">
                 <h3>Reviews</h3>
-                {product.reviews.map((rev, idx) => {
+                {Product.reviews.map((rev, idx) => {
                   return (
                     <div key={idx}>
                       <p>

@@ -12,7 +12,6 @@ import { MyContext } from "./ProductContext";
 function Navbar() {
   const { Cart: CartProduct } = useContext(MyContext);
   const { user } = useContext(MyContext);
-  console.log(user);
   // console.log(user["identities"][0]["identity_data"]["picture"]);
   return (
     <>
