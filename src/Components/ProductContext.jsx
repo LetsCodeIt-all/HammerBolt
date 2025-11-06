@@ -15,6 +15,7 @@ export const MyProvider = ({ children }) => {
       return user.Cart.products;
     }
   }); // Changed to null to indicate loading/no cart initially
+  console.log(cart);
   const [token, setToken] = useState(null);
   const getUser = async () => {
     try {
@@ -85,24 +86,34 @@ export const MyProvider = ({ children }) => {
     }
   }, [cart]);
 
-  const addToCart = async (Product) => {
+  const addToCart = (Product) => {
     console.log(Product);
     if (!user) return alert("Login first to use a cart!");
     // setCart([...cart, Product]);
 
-    setCart([
-      ...cart.map((product) => {
-        return product.meta.barcode != Product.meta.barcode;
-      }),
-      (Product.quantity = parseInt(Product.quantity) + 1),
-    ]);
+    setCart((prevCart) => {
+      let existingCart = prevCart.find((p) => {
+        return p?.meta?.barcode == Product?.meta?.barcode;
+      });
+      console.log(existingCart, "existingCart");
+
+      if (existingCart) {
+        console.log(existingCart, "existingCart");
+        return prevCart.map((p) => {
+          return p.meta.barcode == Product.meta.barcode
+            ? { ...p, quantity: (p.quantity || 0) + 1 }
+            : p;
+        });
+      } else {
+        return [...prevCart, Product];
+      }
+    });
   };
 
   // Remove from cart
   const removeFromCart = async (productId) => {
     if (!user) return alert("Login first!");
     // try {
-    //   // ⚠️ UNSECURED: Include userId in the URL for the DELETE request
     //   const response = await fetch(
     //     `http://localhost:5000/auth/cart/${user.id}/${productId}`,
     //     {
