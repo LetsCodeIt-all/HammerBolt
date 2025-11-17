@@ -3,6 +3,7 @@ import express from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Rss } from "lucide-react";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -26,13 +27,18 @@ router.post("/signup", async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = await prisma.User.create({
+    const user = await prisma.user.create({
       data: { name, email, passwordHash },
     });
 
     // Optional: Create empty cart for new user
-    await prisma.Cart.create({
-      data: { userId: user.id, products: [] },
+    await prisma.cart.create({
+      data: {
+        products: [],
+        User: {
+          connect: { id: user.id },
+        },
+      },
     });
 
     res.json({ message: "User registered successfully" });
@@ -87,7 +93,7 @@ router.get("/me", async (req, res) => {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    const user = await prisma.User.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       include: { Cart: true },
     });
@@ -100,5 +106,39 @@ router.get("/me", async (req, res) => {
     res.status(401).json({ error: "Invalid token" });
   }
 });
+router.post("/cartItem", async (req, res) => {
+  try {
+    const { userId, Products } = req.body;
 
+    // Check if the user's cart exists
+    let cart = await prisma.cart.findUnique({
+      where: { userId: userId },
+    });
+
+    if (!cart) {
+      // Create a new cart for the user
+      cart = await prisma.cart.create({
+        data: {
+          products: Products,
+          user: {
+            connect: { id: userId },
+          },
+        },
+      });
+    } else {
+      // Update existing cart
+      cart = await prisma.cart.update({
+        where: { userId },
+        data: {
+          products: Products,
+        },
+      });
+    }
+
+    res.json(cart);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error updating cart" });
+  }
+});
 export default router;

@@ -27,7 +27,7 @@ function Cart() {
                 <p>Quantity: {product?.quantity || 1}</p>
 
                 <h1>{product?.title}</h1>
-                <h2>{product?.price}</h2>
+                <h2>${product?.price}</h2>
 
                 <p>Delivery by 8 Jan 2035</p>
                 <div>
@@ -71,7 +71,10 @@ function Cart() {
         <div className="GateWay">
           <h2>
             Total Price $
-            {cart?.reduce((sum, product) => sum + product?.price, 0)}
+            {cart?.reduce(
+              (sum, product) => sum + product?.price * product?.quantity,
+              0
+            )}
           </h2>
           <Link
             to={cart?.length !== 0 ? `/checkout` : "/"}

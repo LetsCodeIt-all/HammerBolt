@@ -11,27 +11,54 @@ import { MyContext } from "../Components/ProductContext";
 const CategoryPage = () => {
   const { category } = useParams();
   // const [ArrProducts, setArrProducts] = useState([]);
-
   const {
     ProductsByCategory: ArrProducts,
     setProductsByCategory: setArrProducts,
   } = useContext(MyContext);
   const Categorylinks = [
-    "Beauty",
-    "Tablets",
-    "Fragrances",
-    "Sunglasses",
-    "Smartphones",
-    "laptops",
-    "Sports-accessories",
-    "Mens-watches",
+    { name: "Beauty", links: "/shop/beauty" },
+    { name: "Tablets", links: "/shop/tablets" },
+    { name: "Fragrances", links: "/shop/fragrances" },
+    { name: "Sunglasses", links: "/shop/sunglasses" },
+    { name: "Smartphones", links: "/shop/smartphones" },
+    { name: "Laptops", links: "/shop/laptops" },
+    { name: "Sports-accessories", links: "/shop/sports-accessories" },
+    { name: "Mens-watches", links: "/shop/Mens-watches" },
   ];
-  // const filtered = product.filter(
-  //   (item) => item.category.toLowerCase() === category.toLowerCase()
-  // );
-  const [range, setRange] = useState([70, 100]);
+
+  function rangeSet(prop) {
+    if (prop == "min") {
+      let least = ArrProducts?.[0]?.price;
+      for (let index = 1; index < ArrProducts?.length; index++) {
+        if (ArrProducts?.[index]?.price < least) {
+          least = ArrProducts?.[index]?.price;
+        }
+      }
+      return least;
+    } else {
+      let big = ArrProducts?.[0]?.price;
+      for (let index = 1; index < ArrProducts?.length; index++) {
+        if (ArrProducts?.[index]?.price > big) {
+          big = ArrProducts?.[index]?.price;
+        }
+      }
+      return big;
+    }
+  }
+  const [range, setRange] = useState([
+    rangeSet("min") || 0,
+    rangeSet("max") || 0,
+  ]);
   const handleSliderChange = (e, newValue) => {
     setRange(newValue); // newValue is an array: [min, max]
+    setArrProducts(
+      ArrProducts?.filter((a) => {
+        return newValue[0] <= a?.price && a?.price <= newValue[1];
+      })
+    );
+
+    // );
+    console.log(newValue);
   };
   useEffect(() => {
     async function fetchProduct() {
@@ -45,6 +72,7 @@ const CategoryPage = () => {
         console.error("Failed to fetch products:", error);
       }
     }
+    ``;
 
     fetchProduct();
   }, [category]);
@@ -57,8 +85,8 @@ const CategoryPage = () => {
           <hr />
         </div>
         <div className="categoryLink">
-          {Categorylinks.map((e, idx) => {
-            if (e.toLowerCase() == category) {
+          {Categorylinks.map(({ name, links }, idx) => {
+            if (name.toLowerCase() == category) {
               return (
                 <p
                   style={{
@@ -67,11 +95,22 @@ const CategoryPage = () => {
                     fontSize: "18px",
                   }}
                 >
-                  {e}
+                  {name}
                 </p>
               );
             }
-            return <p key={idx}>{e}</p>;
+            return (
+              <Link
+                className="Links"
+                to={links}
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                }}
+              >
+                <p key={idx}>{name}</p>
+              </Link>
+            );
           })}
         </div>
         <div className="Filter">
@@ -84,11 +123,16 @@ const CategoryPage = () => {
               value={range}
               onChange={handleSliderChange}
               //   valueLabelDisplay="auto"
-              min={70}
-              max={100}
+              min={rangeSet("min")}
+              max={rangeSet("max")}
               className="Slider"
             />
-            <span style={{ display: "flex", justifyContent: "space-between" }}>
+            <span
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <p>Min: ${range[0]}</p>
               <p> Max: ${range[1]}</p>
             </span>
@@ -103,12 +147,12 @@ const CategoryPage = () => {
         </div>
         <div className="productPart">
           <span>
-            <p>{ArrProducts.length} Products</p>
+            <p>{ArrProducts?.length} Products</p>
             <p>Sort by Latetes</p>
           </span>
           <div className="productsDiv">
-            {ArrProducts.map((product) => {
-              return <ProductCard key={product.id} product={product} />;
+            {ArrProducts?.map((product) => {
+              return <ProductCard key={product?.id} product={product} />;
             })}
           </div>
         </div>

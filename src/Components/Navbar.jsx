@@ -55,7 +55,10 @@ function Navbar() {
             <Heart style={{ cursor: "pointer" }} />
           </div>
           <div id="Cart">
-            <ShoppingCart style={{ cursor: "pointer" }} />
+            <Link to="/cart" className="Links">
+              <ShoppingCart style={{ cursor: "pointer" }} />
+              {user?.Cart?.products.length}
+            </Link>
             {/* {user.length} */}
           </div>
         </div>

@@ -12,10 +12,9 @@ export const MyProvider = ({ children }) => {
   );
   const [cart, setCart] = useState(() => {
     if (user) {
-      return user.Cart.products;
+      return user?.Cart?.products;
     }
   }); // Changed to null to indicate loading/no cart initially
-  console.log(cart);
   const [token, setToken] = useState(null);
   const getUser = async () => {
     try {
@@ -27,46 +26,23 @@ export const MyProvider = ({ children }) => {
       if (!res.ok) throw new Error("Failed to fetch user");
 
       const data = await res.json();
-      setUser(data); // ✅ Set the actual user data
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+      console.log(data, "getting from prisma"); // ✅ Set the actual user data
     } catch (err) {
       console.error(err);
-      setUser(null); // optional: clear user on error
+      setUser(null);
     }
   };
 
   useEffect(() => {
-    if (token) getUser();
+    if (token) {
+      localStorage.clear();
 
-    // const { data: listener } = supabase.auth.onAuthStateChange(
-    //   (_event, session) => {
-    //     // setUser(session?.user || null);
-    //   }
-    // );
-    // return () => {
-    //   // listener.subscription.unsubscribe();
-    // };
+      getUser();
+    }
   }, [token]);
 
-  // Fetch cart when user changes
-
-  // fetch(`http://localhost:5000/auth/cart/${user.id}`)
-  // .then(async (res) => {
-  // if (!res.ok) {
-  //     if (res.status === 404) {
-  //       console.log("No cart found, using empty cart");
-  //       return { products: [] }; // fallback
-  //     }
-  //     const error = await res.json();
-  //     throw new Error(error.error || "Failed to fetch cart");
-  //   }
-  //   return res.json();
-  // })
-  // .then((data) =>
-  // )
-  // .catch((err) => {
-  //   console.error("Cart fetch failed:", err);
-  //   setCart([]);
-  // });
   useEffect(() => {
     if (user && Array.isArray(cart)) {
       setUser((prev) => ({
@@ -84,15 +60,31 @@ export const MyProvider = ({ children }) => {
         })
       );
     }
+    if (user) postCartitem(cart);
   }, [cart]);
+  async function postCartitem(Cart) {
+    let data = {
+      id: await user?.Cart?.id,
+      userId: await user?.Cart?.userId,
+      Products: Cart,
+    };
+    let res = await fetch("http://localhost:5000/auth/cartItem", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    let resdata = await res.json();
+  }
 
+  // console.log(user?.Cart);
   const addToCart = (Product) => {
     console.log(Product);
     if (!user) return alert("Login first to use a cart!");
-    // setCart([...cart, Product]);
 
     setCart((prevCart) => {
-      let existingCart = prevCart.find((p) => {
+      let existingCart = prevCart?.find((p) => {
         return p?.meta?.barcode == Product?.meta?.barcode;
       });
       console.log(existingCart, "existingCart");
@@ -113,25 +105,7 @@ export const MyProvider = ({ children }) => {
   // Remove from cart
   const removeFromCart = async (productId) => {
     if (!user) return alert("Login first!");
-    // try {
-    //   const response = await fetch(
-    //     `http://localhost:5000/auth/cart/${user.id}/${productId}`,
-    //     {
-    //       method: "DELETE",
-    //     }
-    //   );
 
-    //   if (!response.ok) throw new Error("Failed to remove product from cart");
-
-    //   const updatedCartData = await response.json();
-
-    //   // Update local state with the products array from the backend's response
-    //   if (updatedCartData.cart && updatedCartData.cart.products) {
-    //     setCart(updatedCartData.cart.products);
-    //   }
-    // } catch (error) {
-    //   console.error("Remove from cart error:", error);
-    // }
     setCart(cart.filter((product) => product?.meta?.barcode != productId));
   };
 

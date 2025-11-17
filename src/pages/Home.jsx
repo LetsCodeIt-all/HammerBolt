@@ -3,48 +3,58 @@ import MopedIcon from "@mui/icons-material/Moped";
 import { Package } from "lucide-react";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import { Link } from "react-router";
+
 function Home() {
   let categories = [
     {
       name: "Mobile",
       imgUrl:
         "https://static.wixstatic.com/media/c837a6_9c30b13d43264ebf888ab1e70eaf2daa~mv2.jpg/v1/fill/w_124,h_124,q_90,enc_avif,quality_auto/c837a6_9c30b13d43264ebf888ab1e70eaf2daa~mv2.jpg",
+      link: "/shop/smartphones",
     },
     {
-      name: "Computer",
+      name: "Fragnences",
       imgUrl:
-        "https://static.wixstatic.com/media/c837a6_82b44061aa3e4ad6958d2a1ac317199c~mv2.jpg/v1/fill/w_124,h_124,enc_avif,quality_auto/c837a6_82b44061aa3e4ad6958d2a1ac317199c~mv2.jpg",
+        "https://www.nicepng.com/png/detail/270-2700288_fogg-scent-make-my-day-fogg-scent-for.png",
+      link: "/shop/fragrances",
     },
     {
       name: "Tablets",
       imgUrl:
         "https://static.wixstatic.com/media/c837a6_6d6b2a5842f449539f528c501e5cc035~mv2.jpg/v1/fill/w_124,h_124,q_90,enc_avif,quality_auto/c837a6_6d6b2a5842f449539f528c501e5cc035~mv2.jpg",
+      link: "/shop/tablets",
     },
     {
-      name: "Sale",
+      name: "Beauty",
       imgUrl:
-        "https://static.wixstatic.com/media/c837a6_3fae8a0f61fc49c0afe7217c479c8e16~mv2.png/v1/fill/w_124,h_124,q_90,enc_avif,quality_auto/c837a6_3fae8a0f61fc49c0afe7217c479c8e16~mv2.png",
+        "https://png.pngtree.com/png-vector/20230217/ourmid/pngtree-beauty-logo-png-image_6604237.png",
+      link: "/shop/beauty",
     },
     {
-      name: "EarWear",
+      name: "Sunglasses",
       imgUrl:
-        "https://static.wixstatic.com/media/c837a6_e0521967c9bb422abb3a3913f64d1eb5~mv2.jpg/v1/fill/w_124,h_124,q_90,enc_avif,quality_auto/c837a6_e0521967c9bb422abb3a3913f64d1eb5~mv2.jpg",
+        "https://www.nicepng.com/png/detail/335-3352461_new-50-goggles-and-sunglasses-png-for-picsart.png",
+      link: "/shop/sunglasses",
     },
     {
       name: "Wearables",
       imgUrl:
         "https://static.wixstatic.com/media/c837a6_71e3b067871a4b6a88c3b93a55ba2b00~mv2.jpg/v1/fill/w_124,h_124,q_90,enc_avif,quality_auto/c837a6_71e3b067871a4b6a88c3b93a55ba2b00~mv2.jpg",
+      link: "/shop/mens-watches",
     },
 
     {
-      name: "Best Seller",
+      name: "Sports",
       imgUrl:
-        "https://static.wixstatic.com/media/c837a6_fba39b02bd5c4f43ae6d4e1db77204c5~mv2.png/v1/fill/w_124,h_124,q_90,enc_avif,quality_auto/c837a6_fba39b02bd5c4f43ae6d4e1db77204c5~mv2.png",
+        "https://img.freepik.com/free-photo/soccer-players-white-background_654080-1277.jpg?semt=ais_hybrid&w=740&q=80",
+      link: "/shop/sports-accessories",
     },
     {
-      name: "TV & Home Cinema",
+      name: "Laptops",
       imgUrl:
-        "https://static.wixstatic.com/media/c837a6_7a28e7356d6d4e9dbc6e0b1dfb2ac9b6~mv2.jpg/v1/fill/w_124,h_124,q_90,enc_avif,quality_auto/c837a6_7a28e7356d6d4e9dbc6e0b1dfb2ac9b6~mv2.jpg",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeFpsJF8rkFCxCltNQl96YLDqbjGIBhwRk0Q&s",
+      link: "/shop/laptops",
     },
   ];
   return (
@@ -132,11 +142,13 @@ function Home() {
       <div className="Category">
         <div id="shopByCategoryText">Shop by Category</div>
         <div>
-          {categories.map(({ name, imgUrl }, idx) => {
+          {categories.map(({ name, imgUrl, link }, idx) => {
             return (
               <div key={idx}>
                 <div className="ImgDiv">
-                  <img src={imgUrl} alt="" />
+                  <Link to={link}>
+                    <img src={imgUrl} alt="" />
+                  </Link>
                 </div>
                 <div className="text">{name}</div>
               </div>
