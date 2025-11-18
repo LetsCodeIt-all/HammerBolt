@@ -10,7 +10,7 @@ import { MyContext } from "../Components/ProductContext";
 
 const CategoryPage = () => {
   const { category } = useParams();
-  // const [ArrProducts, setArrProducts] = useState([]);
+  const [TempProducts, setTempProducts] = useState([]);
   const {
     ProductsByCategory: ArrProducts,
     setProductsByCategory: setArrProducts,
@@ -28,21 +28,9 @@ const CategoryPage = () => {
 
   function rangeSet(prop) {
     if (prop == "min") {
-      let least = ArrProducts?.[0]?.price;
-      for (let index = 1; index < ArrProducts?.length; index++) {
-        if (ArrProducts?.[index]?.price < least) {
-          least = ArrProducts?.[index]?.price;
-        }
-      }
-      return least;
+      return Math.min(...ArrProducts.map((p) => p.price));
     } else {
-      let big = ArrProducts?.[0]?.price;
-      for (let index = 1; index < ArrProducts?.length; index++) {
-        if (ArrProducts?.[index]?.price > big) {
-          big = ArrProducts?.[index]?.price;
-        }
-      }
-      return big;
+      return Math.max(...ArrProducts.map((p) => p.price));
     }
   }
   const [range, setRange] = useState([
@@ -50,16 +38,15 @@ const CategoryPage = () => {
     rangeSet("max") || 0,
   ]);
   const handleSliderChange = (e, newValue) => {
-    setRange(newValue); // newValue is an array: [min, max]
-    setArrProducts(
-      ArrProducts?.filter((a) => {
-        return newValue[0] <= a?.price && a?.price <= newValue[1];
-      })
-    );
-
-    // );
-    console.log(newValue);
+    setRange(newValue);
   };
+  function ApplyChange(newValue) {
+    const filtered = ArrProducts?.filter((item) => {
+      return newValue[0] <= item?.price && item?.price <= newValue[1];
+    });
+
+    setTempProducts(filtered);
+  }
   useEffect(() => {
     async function fetchProduct() {
       try {
@@ -67,16 +54,38 @@ const CategoryPage = () => {
           `https://dummyjson.com/products/category/${category}?limit=10`
         );
         const data = await res.json();
-        setArrProducts(data.products);
+
+        setArrProducts(data.products); // save original
+
+        setTempProducts(data.products); // displayable array
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
     }
-    ``;
 
     fetchProduct();
   }, [category]);
 
+  useEffect(() => {
+    ApplyChange(range);
+  }, [range]);
+  function Sorting(params) {
+    if (params.target.value == "price") {
+      let newArr = [...TempProducts];
+      newArr.sort((a, b) => b.price - a.price);
+      console.log(newArr);
+      // setTempProducts(newArr);
+    } else if (params.target.value == "ASC") {
+      let newArr = [...TempProducts];
+      newArr.sort((a, b) => {
+        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+      });
+      setTempProducts(newArr);
+    } else {
+      let newArr = [...TempProducts];
+      newArr.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+  }
   return (
     <div className="categoryPage">
       <aside>
@@ -147,11 +156,18 @@ const CategoryPage = () => {
         </div>
         <div className="productPart">
           <span>
-            <p>{ArrProducts?.length} Products</p>
-            <p>Sort by Latetes</p>
+            <p>{TempProducts?.length} Products</p>
+            <p>
+              Sort by{" "}
+              <select onChange={Sorting}>
+                <option value="Latest">Latest</option>
+                <option value="ASC">ASC</option>
+                <option value="price">Price</option>
+              </select>
+            </p>
           </span>
           <div className="productsDiv">
-            {ArrProducts?.map((product) => {
+            {TempProducts?.map((product) => {
               return <ProductCard key={product?.id} product={product} />;
             })}
           </div>

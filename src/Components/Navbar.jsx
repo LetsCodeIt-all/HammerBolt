@@ -66,7 +66,7 @@ function Navbar() {
       <div className="ShopOptions">
         <div>
           <Link to="/" className="Links">
-            Shop All{" "}
+            Shop All
           </Link>
           <Link to="/shop/beauty" className="Links">
             Beauty
